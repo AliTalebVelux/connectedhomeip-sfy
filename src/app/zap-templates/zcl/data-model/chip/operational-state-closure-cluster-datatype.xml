@@ -98,4 +98,27 @@ limitations under the License.
     <item value="0x43" name="IntegratedElement"/>
   </enum>
 
+  <enum name="LatchingEnum" type="enum8">
+    <cluster code="0x0CD0"/>
+    <cluster code="0x0105"/> <!-- Closure 1st Dimension -->
+    <cluster code="0x0106"/> <!-- Closure 2st Dimension -->
+    <cluster code="0x0107"/> <!-- Closure 3nd Dimension -->
+    <cluster code="0x0108"/> <!-- Closure 4rd Dimension -->
+    <cluster code="0x0109"/> <!-- Closure 5th Dimension -->
+    <item value="0x00" name="LatchedAndSecured"/>
+    <item value="0x01" name="LatchedButNotSecured"/>
+    <item value="0x02" name="NotLatched"/>
+  </enum>
+
+  <enum name="TagLatchEnum" type="enum8">
+    <cluster code="0x0CD0"/>
+    <cluster code="0x0105"/> <!-- Closure 1st Dimension -->
+    <cluster code="0x0106"/> <!-- Closure 2st Dimension -->
+    <cluster code="0x0107"/> <!-- Closure 3nd Dimension -->
+    <cluster code="0x0108"/> <!-- Closure 4rd Dimension -->
+    <cluster code="0x0109"/> <!-- Closure 5th Dimension -->
+    <item value="0x00" name="Latch"/>
+    <item value="0x01" name="UnLatch"/>
+  </enum>
+  
 </configurator>
