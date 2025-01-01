@@ -128,23 +128,23 @@ declare -A CLUSTER
 # Each CLUSTER_TYPE gives a CD w/ allowing the bundle of PIDs
 
 
-CLUSTER=([cluster_id]="0x0CD1" [cluster_short_lower]="1st")
+CLUSTER=([cluster_id]="0x0105" [cluster_short_lower]="1st")
 holder=$(declare -p CLUSTER)
 CLUSTERS["1"]=${holder}
 
-CLUSTER=([cluster_id]="0x0CD2" [cluster_short_lower]="2nd")
+CLUSTER=([cluster_id]="0x0106" [cluster_short_lower]="2nd")
 holder=$(declare -p CLUSTER)
 CLUSTERS["2"]=${holder}
 
-CLUSTER=([cluster_id]="0x0CD3" [cluster_short_lower]="3rd")
+CLUSTER=([cluster_id]="0x0107" [cluster_short_lower]="3rd")
 holder=$(declare -p CLUSTER)
 CLUSTERS["3"]=${holder}
 
-CLUSTER=([cluster_id]="0x0CD4" [cluster_short_lower]="4th")
+CLUSTER=([cluster_id]="0x0108" [cluster_short_lower]="4th")
 holder=$(declare -p CLUSTER)
 CLUSTERS["4"]=${holder}
 
-CLUSTER=([cluster_id]="0x0CD5" [cluster_short_lower]="5th")
+CLUSTER=([cluster_id]="0x0109" [cluster_short_lower]="5th")
 holder=$(declare -p CLUSTER)
 CLUSTERS["5"]=${holder}
 
@@ -168,7 +168,7 @@ echo -e "${On_Cyan}===> Step: Generate DACs & CDs:${Nc} per CLUSTER_TYPE"
 		file_name="closure-${cluster_short_lower}-dimension-cluster.xml"
 		output_file="zcl/data-model/chip/${file_name}"
 		echo "FileName=${file_name}"
-		cp zcl/data-model/chip/closure-dimension-clusters.xml ${output_file}
+		cp zcl/data-model/chip/closure-dimension-cluster.xml ${output_file}
 
 		# Replacement fields within the new cluster
 		sed -i -e "s/\[cluster_short_lower\]/${cluster_short_lower}/g" ${output_file}

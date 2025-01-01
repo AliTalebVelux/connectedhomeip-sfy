@@ -270,7 +270,7 @@ Git: 1.4-450-g2e9a04ec5-dirty
       </mandatoryConform>
     </attribute>
     <command code="0x00" source="client" name="SetTarget" optional="false">
-      <description>Upon receipt, this SHALL move the product&apos;s dimension in the most fitting state following the data as follows: </description>
+      <description>Upon receipt, this SHALL move the products dimension in the most fitting state following the data as follows: </description>
       <arg id="0" name="Position" type="percent100ths" optional="true"/>
       <arg id="1" name="TagLatch" type="TagLatchEnum" optional="true" min="0x00" max="0x01"/>
       <arg id="2" name="Speed" type="ThreeLevelAutoEnum" optional="true" min="0x00" max="0x03"/>
@@ -421,7 +421,7 @@ Git: 1.4-450-g2e9a04ec5-dirty
       </mandatoryConform>
     </attribute>
     <command code="0x00" source="client" name="SetTarget" optional="false">
-      <description>Upon receipt, this SHALL move the product&apos;s dimension in the most fitting state following the data as follows: </description>
+      <description>Upon receipt, this SHALL move the products dimension in the most fitting state following the data as follows: </description>
       <arg id="0" name="Position" type="percent100ths" optional="true"/>
       <arg id="1" name="TagLatch" type="TagLatchEnum" optional="true" min="0x00" max="0x01"/>
       <arg id="2" name="Speed" type="ThreeLevelAutoEnum" optional="true" min="0x00" max="0x03"/>
@@ -572,7 +572,7 @@ Git: 1.4-450-g2e9a04ec5-dirty
       </mandatoryConform>
     </attribute>
     <command code="0x00" source="client" name="SetTarget" optional="false">
-      <description>Upon receipt, this SHALL move the product&apos;s dimension in the most fitting state following the data as follows: </description>
+      <description>Upon receipt, this SHALL move the products dimension in the most fitting state following the data as follows: </description>
       <arg id="0" name="Position" type="percent100ths" optional="true"/>
       <arg id="1" name="TagLatch" type="TagLatchEnum" optional="true" min="0x00" max="0x01"/>
       <arg id="2" name="Speed" type="ThreeLevelAutoEnum" optional="true" min="0x00" max="0x03"/>
@@ -723,7 +723,7 @@ Git: 1.4-450-g2e9a04ec5-dirty
       </mandatoryConform>
     </attribute>
     <command code="0x00" source="client" name="SetTarget" optional="false">
-      <description>Upon receipt, this SHALL move the product&apos;s dimension in the most fitting state following the data as follows: </description>
+      <description>Upon receipt, this SHALL move the products dimension in the most fitting state following the data as follows: </description>
       <arg id="0" name="Position" type="percent100ths" optional="true"/>
       <arg id="1" name="TagLatch" type="TagLatchEnum" optional="true" min="0x00" max="0x01"/>
       <arg id="2" name="Speed" type="ThreeLevelAutoEnum" optional="true" min="0x00" max="0x03"/>
@@ -874,7 +874,7 @@ Git: 1.4-450-g2e9a04ec5-dirty
       </mandatoryConform>
     </attribute>
     <command code="0x00" source="client" name="SetTarget" optional="false">
-      <description>Upon receipt, this SHALL move the product&apos;s dimension in the most fitting state following the data as follows: </description>
+      <description>Upon receipt, this SHALL move the products dimension in the most fitting state following the data as follows: </description>
       <arg id="0" name="Position" type="percent100ths" optional="true"/>
       <arg id="1" name="TagLatch" type="TagLatchEnum" optional="true" min="0x00" max="0x01"/>
       <arg id="2" name="Speed" type="ThreeLevelAutoEnum" optional="true" min="0x00" max="0x03"/>

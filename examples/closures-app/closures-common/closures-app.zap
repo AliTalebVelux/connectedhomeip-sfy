@@ -3007,7 +3007,7 @@
               "isEnabled": 1
             },
 			{
-              "name": "Steps",
+              "name": "Step",
               "code": 1,
               "mfgCode": null,
               "source": "client",
@@ -3339,7 +3339,7 @@
               "isEnabled": 1
             },
 			{
-              "name": "Steps",
+              "name": "Step",
               "code": 1,
               "mfgCode": null,
               "source": "client",
@@ -3671,7 +3671,7 @@
               "isEnabled": 1
             },
 			{
-              "name": "Steps",
+              "name": "Step",
               "code": 1,
               "mfgCode": null,
               "source": "client",
@@ -4003,7 +4003,7 @@
               "isEnabled": 1
             },
 			{
-              "name": "Steps",
+              "name": "Step",
               "code": 1,
               "mfgCode": null,
               "source": "client",
@@ -4335,7 +4335,7 @@
               "isEnabled": 1
             },
 			{
-              "name": "Steps",
+              "name": "Step",
               "code": 1,
               "mfgCode": null,
               "source": "client",
