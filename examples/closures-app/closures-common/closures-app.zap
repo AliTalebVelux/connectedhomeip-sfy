@@ -2992,7 +2992,7 @@
         },
         {
           "name": "Closure 1st Dimension",
-          "code": 3281,
+          "code": 261,
           "mfgCode": null,
           "define": "CLOSURE_1_ST_DIMENSION_CLUSTER",
           "side": "server",
@@ -3006,7 +3006,7 @@
               "isIncoming": 1,
               "isEnabled": 1
             },
-			{
+			      {
               "name": "Step",
               "code": 1,
               "mfgCode": null,
@@ -3018,7 +3018,7 @@
           "attributes": [
             {
               "name": "TagList",
-              "code": 11,
+              "code": 0,
               "mfgCode": null,
               "side": "server",
               "type": "SemanticTagStruct",
@@ -3032,9 +3032,9 @@
               "maxInterval": 65534,
               "reportableChange": 0
             },
-			{
+			      {
               "name": "Current",
-              "code": 0,
+              "code": 1,
               "mfgCode": null,
               "side": "server",
               "type": "CurrentStruct",
@@ -3050,7 +3050,7 @@
             },
             {
               "name": "Target",
-              "code": 1,
+              "code": 2,
               "mfgCode": null,
               "side": "server",
               "type": "TargetStruct",
@@ -3066,7 +3066,7 @@
             },
             {
               "name": "Resolution",
-              "code": 2,
+              "code": 3,
               "mfgCode": null,
               "side": "server",
               "type": "percent100ths",
@@ -3082,7 +3082,7 @@
             },
             {
               "name": "StepValue",
-              "code": 3,
+              "code": 4,
               "mfgCode": null,
               "side": "server",
               "type": "percent100ths",
@@ -3098,10 +3098,10 @@
             },
             {
               "name": "Unit",
-              "code": 4,
+              "code": 5,
               "mfgCode": null,
               "side": "server",
-              "type": "UnitEnum",
+              "type": "ClosureUnitEnum",
               "included": 1,
               "storageOption": "External",
               "singleton": 0,
@@ -3114,10 +3114,10 @@
             },
             {
               "name": "UnitRange",
-              "code": 5,
+              "code": 6,
               "mfgCode": null,
               "side": "server",
-              "type": "SignedValuesRangeStruct",
+              "type": "UnitRangeStruct",
               "included": 1,
               "storageOption": "External",
               "singleton": 0,
@@ -3130,7 +3130,7 @@
             },
             {
               "name": "LimitRange",
-              "code": 6,
+              "code": 7,
               "mfgCode": null,
               "side": "server",
               "type": "RangePercent100thsStruct",
@@ -3146,7 +3146,7 @@
             },
             {
               "name": "TranslationDirection",
-              "code": 7,
+              "code": 8,
               "mfgCode": null,
               "side": "server",
               "type": "TranslationDirectionEnum",
@@ -3162,7 +3162,7 @@
             },
             {
               "name": "RotationAxis",
-              "code": 8,
+              "code": 9,
               "mfgCode": null,
               "side": "server",
               "type": "RotationAxisEnum",
@@ -3178,7 +3178,7 @@
             },
             {
               "name": "Overflow",
-              "code": 9,
+              "code": 10,
               "mfgCode": null,
               "side": "server",
               "type": "OverFlowEnum",
@@ -3194,7 +3194,7 @@
             },
             {
               "name": "ModulationType",
-              "code": 10,
+              "code": 11,
               "mfgCode": null,
               "side": "server",
               "type": "ModulationTypeEnum",
@@ -3210,7 +3210,7 @@
             },
             {
               "name": "LatchingAxis",
-              "code": 13,
+              "code": 12,
               "mfgCode": null,
               "side": "server",
               "type": "LatchingAxisEnum",
@@ -3324,7 +3324,7 @@
         },
         {
           "name": "Closure 2nd Dimension",
-          "code": 3282,
+          "code": 262,
           "mfgCode": null,
           "define": "CLOSURE_2_ND_DIMENSION_CLUSTER",
           "side": "server",
@@ -3338,7 +3338,7 @@
               "isIncoming": 1,
               "isEnabled": 1
             },
-			{
+			      {
               "name": "Step",
               "code": 1,
               "mfgCode": null,
@@ -3350,7 +3350,7 @@
           "attributes": [
             {
               "name": "TagList",
-              "code": 11,
+              "code": 0,
               "mfgCode": null,
               "side": "server",
               "type": "SemanticTagStruct",
@@ -3364,9 +3364,9 @@
               "maxInterval": 65534,
               "reportableChange": 0
             },
-			{
+			      {
               "name": "Current",
-              "code": 0,
+              "code": 1,
               "mfgCode": null,
               "side": "server",
               "type": "CurrentStruct",
@@ -3382,7 +3382,7 @@
             },
             {
               "name": "Target",
-              "code": 1,
+              "code": 2,
               "mfgCode": null,
               "side": "server",
               "type": "TargetStruct",
@@ -3398,7 +3398,7 @@
             },
             {
               "name": "Resolution",
-              "code": 2,
+              "code": 3,
               "mfgCode": null,
               "side": "server",
               "type": "percent100ths",
@@ -3414,7 +3414,7 @@
             },
             {
               "name": "StepValue",
-              "code": 3,
+              "code": 4,
               "mfgCode": null,
               "side": "server",
               "type": "percent100ths",
@@ -3430,10 +3430,10 @@
             },
             {
               "name": "Unit",
-              "code": 4,
+              "code": 5,
               "mfgCode": null,
               "side": "server",
-              "type": "UnitEnum",
+              "type": "ClosureUnitEnum",
               "included": 1,
               "storageOption": "External",
               "singleton": 0,
@@ -3446,10 +3446,10 @@
             },
             {
               "name": "UnitRange",
-              "code": 5,
+              "code": 6,
               "mfgCode": null,
               "side": "server",
-              "type": "SignedValuesRangeStruct",
+              "type": "UnitRangeStruct",
               "included": 1,
               "storageOption": "External",
               "singleton": 0,
@@ -3462,7 +3462,7 @@
             },
             {
               "name": "LimitRange",
-              "code": 6,
+              "code": 7,
               "mfgCode": null,
               "side": "server",
               "type": "RangePercent100thsStruct",
@@ -3478,7 +3478,7 @@
             },
             {
               "name": "TranslationDirection",
-              "code": 7,
+              "code": 8,
               "mfgCode": null,
               "side": "server",
               "type": "TranslationDirectionEnum",
@@ -3494,7 +3494,7 @@
             },
             {
               "name": "RotationAxis",
-              "code": 8,
+              "code": 9,
               "mfgCode": null,
               "side": "server",
               "type": "RotationAxisEnum",
@@ -3510,7 +3510,7 @@
             },
             {
               "name": "Overflow",
-              "code": 9,
+              "code": 10,
               "mfgCode": null,
               "side": "server",
               "type": "OverFlowEnum",
@@ -3526,7 +3526,7 @@
             },
             {
               "name": "ModulationType",
-              "code": 10,
+              "code": 11,
               "mfgCode": null,
               "side": "server",
               "type": "ModulationTypeEnum",
@@ -3542,7 +3542,7 @@
             },
             {
               "name": "LatchingAxis",
-              "code": 13,
+              "code": 12,
               "mfgCode": null,
               "side": "server",
               "type": "LatchingAxisEnum",
@@ -3656,7 +3656,7 @@
         },
         {
           "name": "Closure 3rd Dimension",
-          "code": 3283,
+          "code": 263,
           "mfgCode": null,
           "define": "CLOSURE_3_RD_DIMENSION_CLUSTER",
           "side": "server",
@@ -3670,7 +3670,7 @@
               "isIncoming": 1,
               "isEnabled": 1
             },
-			{
+			      {
               "name": "Step",
               "code": 1,
               "mfgCode": null,
@@ -3682,7 +3682,7 @@
           "attributes": [
             {
               "name": "TagList",
-              "code": 11,
+              "code": 0,
               "mfgCode": null,
               "side": "server",
               "type": "SemanticTagStruct",
@@ -3698,7 +3698,7 @@
             },
 			{
               "name": "Current",
-              "code": 0,
+              "code": 1,
               "mfgCode": null,
               "side": "server",
               "type": "CurrentStruct",
@@ -3714,7 +3714,7 @@
             },
             {
               "name": "Target",
-              "code": 1,
+              "code": 2,
               "mfgCode": null,
               "side": "server",
               "type": "TargetStruct",
@@ -3730,7 +3730,7 @@
             },
             {
               "name": "Resolution",
-              "code": 2,
+              "code": 3,
               "mfgCode": null,
               "side": "server",
               "type": "percent100ths",
@@ -3746,7 +3746,7 @@
             },
             {
               "name": "StepValue",
-              "code": 3,
+              "code": 4,
               "mfgCode": null,
               "side": "server",
               "type": "percent100ths",
@@ -3762,10 +3762,10 @@
             },
             {
               "name": "Unit",
-              "code": 4,
+              "code": 5,
               "mfgCode": null,
               "side": "server",
-              "type": "UnitEnum",
+              "type": "ClosureUnitEnum",
               "included": 1,
               "storageOption": "External",
               "singleton": 0,
@@ -3778,10 +3778,10 @@
             },
             {
               "name": "UnitRange",
-              "code": 5,
+              "code": 6,
               "mfgCode": null,
               "side": "server",
-              "type": "SignedValuesRangeStruct",
+              "type": "UnitRangeStruct",
               "included": 1,
               "storageOption": "External",
               "singleton": 0,
@@ -3794,7 +3794,7 @@
             },
             {
               "name": "LimitRange",
-              "code": 6,
+              "code": 7,
               "mfgCode": null,
               "side": "server",
               "type": "RangePercent100thsStruct",
@@ -3810,7 +3810,7 @@
             },
             {
               "name": "TranslationDirection",
-              "code": 7,
+              "code": 8,
               "mfgCode": null,
               "side": "server",
               "type": "TranslationDirectionEnum",
@@ -3826,7 +3826,7 @@
             },
             {
               "name": "RotationAxis",
-              "code": 8,
+              "code": 9,
               "mfgCode": null,
               "side": "server",
               "type": "RotationAxisEnum",
@@ -3842,7 +3842,7 @@
             },
             {
               "name": "Overflow",
-              "code": 9,
+              "code": 10,
               "mfgCode": null,
               "side": "server",
               "type": "OverFlowEnum",
@@ -3858,7 +3858,7 @@
             },
             {
               "name": "ModulationType",
-              "code": 10,
+              "code": 11,
               "mfgCode": null,
               "side": "server",
               "type": "ModulationTypeEnum",
@@ -3874,7 +3874,7 @@
             },
             {
               "name": "LatchingAxis",
-              "code": 13,
+              "code": 12,
               "mfgCode": null,
               "side": "server",
               "type": "LatchingAxisEnum",
@@ -3988,7 +3988,7 @@
         },
         {
           "name": "Closure 4th Dimension",
-          "code": 3284,
+          "code": 264,
           "mfgCode": null,
           "define": "CLOSURE_4_TH_DIMENSION_CLUSTER",
           "side": "server",
@@ -4002,7 +4002,7 @@
               "isIncoming": 1,
               "isEnabled": 1
             },
-			{
+			      {
               "name": "Step",
               "code": 1,
               "mfgCode": null,
@@ -4014,7 +4014,7 @@
           "attributes": [
             {
               "name": "TagList",
-              "code": 11,
+              "code": 0,
               "mfgCode": null,
               "side": "server",
               "type": "SemanticTagStruct",
@@ -4028,9 +4028,9 @@
               "maxInterval": 65534,
               "reportableChange": 0
             },
-			{
+			      {
               "name": "Current",
-              "code": 0,
+              "code": 1,
               "mfgCode": null,
               "side": "server",
               "type": "CurrentStruct",
@@ -4046,7 +4046,7 @@
             },
             {
               "name": "Target",
-              "code": 1,
+              "code": 2,
               "mfgCode": null,
               "side": "server",
               "type": "TargetStruct",
@@ -4062,7 +4062,7 @@
             },
             {
               "name": "Resolution",
-              "code": 2,
+              "code": 3,
               "mfgCode": null,
               "side": "server",
               "type": "percent100ths",
@@ -4078,7 +4078,7 @@
             },
             {
               "name": "StepValue",
-              "code": 3,
+              "code": 4,
               "mfgCode": null,
               "side": "server",
               "type": "percent100ths",
@@ -4094,10 +4094,10 @@
             },
             {
               "name": "Unit",
-              "code": 4,
+              "code": 5,
               "mfgCode": null,
               "side": "server",
-              "type": "UnitEnum",
+              "type": "ClosureUnitEnum",
               "included": 1,
               "storageOption": "External",
               "singleton": 0,
@@ -4110,10 +4110,10 @@
             },
             {
               "name": "UnitRange",
-              "code": 5,
+              "code": 6,
               "mfgCode": null,
               "side": "server",
-              "type": "SignedValuesRangeStruct",
+              "type": "UnitRangeStruct",
               "included": 1,
               "storageOption": "External",
               "singleton": 0,
@@ -4126,7 +4126,7 @@
             },
             {
               "name": "LimitRange",
-              "code": 6,
+              "code": 7,
               "mfgCode": null,
               "side": "server",
               "type": "RangePercent100thsStruct",
@@ -4142,7 +4142,7 @@
             },
             {
               "name": "TranslationDirection",
-              "code": 7,
+              "code": 8,
               "mfgCode": null,
               "side": "server",
               "type": "TranslationDirectionEnum",
@@ -4158,7 +4158,7 @@
             },
             {
               "name": "RotationAxis",
-              "code": 8,
+              "code": 9,
               "mfgCode": null,
               "side": "server",
               "type": "RotationAxisEnum",
@@ -4174,7 +4174,7 @@
             },
             {
               "name": "Overflow",
-              "code": 9,
+              "code": 10,
               "mfgCode": null,
               "side": "server",
               "type": "OverFlowEnum",
@@ -4190,7 +4190,7 @@
             },
             {
               "name": "ModulationType",
-              "code": 10,
+              "code": 11,
               "mfgCode": null,
               "side": "server",
               "type": "ModulationTypeEnum",
@@ -4206,7 +4206,7 @@
             },
             {
               "name": "LatchingAxis",
-              "code": 13,
+              "code": 12,
               "mfgCode": null,
               "side": "server",
               "type": "LatchingAxisEnum",
@@ -4286,7 +4286,7 @@
             },
             {
               "name": "FeatureMap",
-              "code": 65532,
+              "code": 265,
               "mfgCode": null,
               "side": "server",
               "type": "bitmap32",
@@ -4320,7 +4320,7 @@
         },
         {
           "name": "Closure 5th Dimension",
-          "code": 3285,
+          "code": 265,
           "mfgCode": null,
           "define": "CLOSURE_5_TH_DIMENSION_CLUSTER",
           "side": "server",
@@ -4334,7 +4334,7 @@
               "isIncoming": 1,
               "isEnabled": 1
             },
-			{
+			      {
               "name": "Step",
               "code": 1,
               "mfgCode": null,
@@ -4346,7 +4346,7 @@
           "attributes": [
             {
               "name": "TagList",
-              "code": 11,
+              "code": 0,
               "mfgCode": null,
               "side": "server",
               "type": "SemanticTagStruct",
@@ -4360,9 +4360,9 @@
               "maxInterval": 65534,
               "reportableChange": 0
             },
-			{
+			      {
               "name": "Current",
-              "code": 0,
+              "code": 1,
               "mfgCode": null,
               "side": "server",
               "type": "CurrentStruct",
@@ -4378,7 +4378,7 @@
             },
             {
               "name": "Target",
-              "code": 1,
+              "code": 2,
               "mfgCode": null,
               "side": "server",
               "type": "TargetStruct",
@@ -4394,7 +4394,7 @@
             },
             {
               "name": "Resolution",
-              "code": 2,
+              "code": 3,
               "mfgCode": null,
               "side": "server",
               "type": "percent100ths",
@@ -4410,7 +4410,7 @@
             },
             {
               "name": "StepValue",
-              "code": 3,
+              "code": 4,
               "mfgCode": null,
               "side": "server",
               "type": "percent100ths",
@@ -4426,10 +4426,10 @@
             },
             {
               "name": "Unit",
-              "code": 4,
+              "code": 5,
               "mfgCode": null,
               "side": "server",
-              "type": "UnitEnum",
+              "type": "ClosureUnitEnum",
               "included": 1,
               "storageOption": "External",
               "singleton": 0,
@@ -4442,10 +4442,10 @@
             },
             {
               "name": "UnitRange",
-              "code": 5,
+              "code": 6,
               "mfgCode": null,
               "side": "server",
-              "type": "SignedValuesRangeStruct",
+              "type": "UnitRangeStruct",
               "included": 1,
               "storageOption": "External",
               "singleton": 0,
@@ -4458,7 +4458,7 @@
             },
             {
               "name": "LimitRange",
-              "code": 6,
+              "code": 7,
               "mfgCode": null,
               "side": "server",
               "type": "RangePercent100thsStruct",
@@ -4474,7 +4474,7 @@
             },
             {
               "name": "TranslationDirection",
-              "code": 7,
+              "code": 8,
               "mfgCode": null,
               "side": "server",
               "type": "TranslationDirectionEnum",
@@ -4490,7 +4490,7 @@
             },
             {
               "name": "RotationAxis",
-              "code": 8,
+              "code": 9,
               "mfgCode": null,
               "side": "server",
               "type": "RotationAxisEnum",
@@ -4506,7 +4506,7 @@
             },
             {
               "name": "Overflow",
-              "code": 9,
+              "code": 10,
               "mfgCode": null,
               "side": "server",
               "type": "OverFlowEnum",
@@ -4522,7 +4522,7 @@
             },
             {
               "name": "ModulationType",
-              "code": 10,
+              "code": 11,
               "mfgCode": null,
               "side": "server",
               "type": "ModulationTypeEnum",
@@ -4538,7 +4538,7 @@
             },
             {
               "name": "LatchingAxis",
-              "code": 13,
+              "code": 12,
               "mfgCode": null,
               "side": "server",
               "type": "LatchingAxisEnum",
