@@ -133,7 +133,7 @@ Git: 1.4-450-g2e9a04ec5-dirty
     <item name="CeilingCenteredSymmetry" value="0x0F"/>
   </enum>
 
-  <struct name="CurrentStruct">
+  <struct name="CurrentStruct" apiMaturity="provisional">
     <cluster code="0x0105"/>
     <cluster code="0x0106"/>
     <cluster code="0x0107"/>
@@ -144,7 +144,7 @@ Git: 1.4-450-g2e9a04ec5-dirty
     <item fieldId="2" name="Speed" type="ThreeLevelAutoEnum" optional="true" default="0x00" min="0x00" max="0x03"/>
   </struct>
 
-  <struct name="RangePercent100thsStruct">
+  <struct name="RangePercent100thsStruct" apiMaturity="provisional">
     <cluster code="0x0105"/>
     <cluster code="0x0106"/>
     <cluster code="0x0107"/>
@@ -154,7 +154,7 @@ Git: 1.4-450-g2e9a04ec5-dirty
     <item fieldId="1" name="Max" type="percent100ths" max="10000"/>
   </struct>
 
-  <struct name="TargetStruct">
+  <struct name="TargetStruct" apiMaturity="provisional">
     <cluster code="0x0105"/>
     <cluster code="0x0106"/>
     <cluster code="0x0107"/>
@@ -165,7 +165,7 @@ Git: 1.4-450-g2e9a04ec5-dirty
     <item fieldId="2" name="Speed" type="ThreeLevelAutoEnum" optional="true" default="0x00" min="0x00" max="0x03"/>
   </struct>
 
-  <struct name="UnitRangeStruct">
+  <struct name="UnitRangeStruct" apiMaturity="provisional">
     <cluster code="0x0105"/>
     <cluster code="0x0106"/>
     <cluster code="0x0107"/>
