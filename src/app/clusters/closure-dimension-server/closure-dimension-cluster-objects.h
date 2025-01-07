@@ -43,23 +43,33 @@ static constexpr std::array<Info, 5> const AliasedClusters = {{
 
 // Redeclare alias toward the first Cluster dimension for common DataType
 /* Enum, BitMap, Structure */
-using UnitEnum = Closure1stDimension::UnitEnum; //--> Clusters::detail::UnitEnum;
-using LatchingEnum = Closure1stDimension::LatchingEnum;
-using NLatchingEnum = Closure1stDimension::Attributes::CurrentLatching::TypeInfo::Type; // Nullable
+
+//using UnitEnum = Closure1stDimension::UnitEnum; //--> Clusters::detail::UnitEnum;
+using ClosureUnitEnum = Closure1stDimension::ClosureUnitEnum; //--> Clusters::detail::UnitEnum;
+
+//using NLatchingEnum = Closure1stDimension::Attributes::CurrentLatching::TypeInfo::Type; // Nullable
+
 using TranslationDirectionEnum = Closure1stDimension::TranslationDirectionEnum;
 using RotationAxisEnum = Closure1stDimension::RotationAxisEnum;
 using ModulationTypeEnum = Closure1stDimension::ModulationTypeEnum;
 using LatchingAxisEnum = Closure1stDimension::LatchingAxisEnum;
-using OverFlowEnum = Closure1stDimension::OverFlowEnum;
-using SignedValuesRangeStruct = Closure1stDimension::Structs::SignedValuesRangeStruct::Type;
+using OverflowEnum = Closure1stDimension::OverflowEnum;
+
+//using SignedValuesRangeStruct = Closure1stDimension::Structs::SignedValuesRangeStruct::Type;
+using UnitRangeStruct = Closure1stDimension::Structs::UnitRangeStruct::Type;
+
 using RangePercent100thsStruct = Closure1stDimension::Structs::RangePercent100thsStruct::Type;
 using NRangePercent100thsStruct = Closure1stDimension::Attributes::LimitRange::TypeInfo::Type; // Nullable
-using PositioningBitmap = chip::app::Clusters::Closure1stDimension::PositioningBitmap;
-using BitMaskPositioningBitmap = chip::BitMask<chip::app::Clusters::Closure1stDimension::PositioningBitmap>;
-using NBitMaskPositioningBitmap = Closure1stDimension::Attributes::CurrentPositioning::TypeInfo::Type; // Nullable
+
+using CurrentStruct = Closure1stDimension::Structs::CurrentStruct::Type;
+using NCurrentStruct = Closure1stDimension::Attributes::Current::TypeInfo::Type; // Nullable
+using TargetStruct = Closure1stDimension::Structs::TargetStruct::Type;
+using NTargetStruct = Closure1stDimension::Attributes::Target::TypeInfo::Type; // Nullable
+
+//using SemanticTagStruct = Closure1stDimension::Structs::SemanticTagStruct::Type; 
 
 using Feature = Closure1stDimension::Feature;
-using TXXT = chip::app::DataModel::Nullable<chip::BitMask<chip::app::Clusters::Closure1stDimension::PositioningBitmap>>; ///using PositioningBitmap = Clusters::detail::PositioningBitmap;
+//using TXXT = chip::app::DataModel::Nullable<chip::BitMask<chip::app::Clusters::Closure1stDimension::PositioningBitmap>>; ///using PositioningBitmap = Clusters::detail::PositioningBitmap;
 //chip::app::DataModel::Nullable<chip::BitMask<chip::app::Clusters::Closure4thDimension::PositioningBitmap>>;
 //using SignedValuesRangeStruct = Closure1stDimension::Structs::SignedValuesRangeStruct;
 // enum class Feature : uint32_t
@@ -75,13 +85,17 @@ using TXXT = chip::app::DataModel::Nullable<chip::BitMask<chip::app::Clusters::C
 /* Attributes::Id */
 namespace Attributes {
 
-namespace CurrentPositioning {
-static constexpr AttributeId Id = Closure1stDimension::Attributes::CurrentPositioning::Id;
-} // namespace CurrentPositioning
+namespace TagList {
+static constexpr AttributeId Id = Closure1stDimension::Attributes::TagList::Id;
+} // namespace TagList
 
-namespace TargetPositioning {
-static constexpr AttributeId Id = Closure1stDimension::Attributes::TargetPositioning::Id;
-} // namespace TargetPositioning
+namespace Current {
+static constexpr AttributeId Id = Closure1stDimension::Attributes::Current::Id;
+} // namespace Current
+
+namespace Target {
+static constexpr AttributeId Id = Closure1stDimension::Attributes::Target::Id;
+} // namespace Target
 
 namespace Resolution {
 static constexpr AttributeId Id = Closure1stDimension::Attributes::Resolution::Id;
@@ -111,21 +125,13 @@ namespace RotationAxis {
 static constexpr AttributeId Id = Closure1stDimension::Attributes::RotationAxis::Id;
 } // namespace RotationAxis
 
-namespace OverFlow {
-static constexpr AttributeId Id = Closure1stDimension::Attributes::OverFlow::Id;
+namespace Overflow {
+static constexpr AttributeId Id = Closure1stDimension::Attributes::Overflow::Id;
 } // namespace OverFlow
 
 namespace ModulationType {
 static constexpr AttributeId Id = Closure1stDimension::Attributes::ModulationType::Id;
 } // namespace ModulationType
-
-namespace CurrentLatching {
-static constexpr AttributeId Id = Closure1stDimension::Attributes::CurrentLatching::Id;
-} // namespace CurrentLatching
-
-namespace TargetLatching {
-static constexpr AttributeId Id = Closure1stDimension::Attributes::TargetLatching::Id;
-} // namespace TargetLatching
 
 namespace LatchingAxis {
 static constexpr AttributeId Id = Closure1stDimension::Attributes::LatchingAxis::Id;
@@ -156,20 +162,14 @@ static constexpr AttributeId Id = Globals::Attributes::ClusterRevision::Id;
 /* Commands::Id */
 namespace Commands {
 
-namespace Steps {
-static constexpr CommandId Id = Closure1stDimension::Commands::Steps::Id;
-using DecodableType = Closure1stDimension::Commands::Steps::DecodableType;
+namespace SetTarget  {
+static constexpr CommandId Id = Closure1stDimension::Commands::SetTarget::Id;
+using DecodableType = Closure1stDimension::Commands::SetTarget::DecodableType;
+} // namespace SetTarget 
+namespace Step {
+static constexpr CommandId Id = Closure1stDimension::Commands::Step::Id;
+using DecodableType = Closure1stDimension::Commands::Step::DecodableType;
 } // namespace Steps
-
-namespace Latch {
-static constexpr CommandId Id = Closure1stDimension::Commands::Latch::Id;
-using DecodableType = Closure1stDimension::Commands::Latch::DecodableType;
-} // namespace Latch
-
-namespace UnLatch {
-static constexpr CommandId Id = Closure1stDimension::Commands::UnLatch::Id;
-using DecodableType = Closure1stDimension::Commands::UnLatch::DecodableType;
-} // namespace UnLatch
 
 } // namespace Commands
 
