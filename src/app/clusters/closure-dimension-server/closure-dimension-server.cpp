@@ -182,8 +182,8 @@ CHIP_ERROR Instance::CHIP_ERROR SetTarget(Optional<Percent100ths> aPositioning, 
 			return CHIP_ERROR_INVALID_ARGUMENT;
 		}
 
-		newTarget.kPosition = aPositioning.Value();
-		nullableTarget.SetNonNull(newTarget);
+		target.kPosition = aPositioning.Value();
+		nullableTarget.SetNonNull(target);
 	}
 	if (aSpeed.HasValue())
 	{
@@ -192,8 +192,8 @@ CHIP_ERROR Instance::CHIP_ERROR SetTarget(Optional<Percent100ths> aPositioning, 
 			return CHIP_ERROR_INVALID_ARGUMENT;
 		}
 
-		newTarget.kSpeed = aSpeed.Value();
-		nullableTarget.SetNonNull(newTarget);
+		target.kSpeed = aSpeed.Value();
+		nullableTarget.SetNonNull(target);
 	}
 	if (aLatch.HasValue())
 	{
@@ -202,8 +202,8 @@ CHIP_ERROR Instance::CHIP_ERROR SetTarget(Optional<Percent100ths> aPositioning, 
 			return CHIP_ERROR_INVALID_ARGUMENT;
 		}
 
-		newTarget.kLatching = kTagLatch.Value();
-		nullableTarget.SetNonNull(newTarget);
+		target.kLatching = kTagLatch.Value();
+		nullableTarget.SetNonNull(target);
 	}
 
 	if (!aPositioning.HasValue() && !aTagLatch.HasValue() && !aSpeed.HasValue())
