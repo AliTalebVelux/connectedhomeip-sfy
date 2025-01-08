@@ -80,13 +80,8 @@ struct DummyRotationOrLatchingMembers
 class PositioningMembers
 {
 protected:
-    //NBitMaskPositioningBitmap mCurrentPositioning;
 	NCurrentStruct mCurrent;
-
-    //NBitMaskPositioningBitmap mTargetPositioning;
 	NTargetStruct mTarget;
-
-	//Percent100ths mCurrentPositioning;
 
     Percent100ths mResolution;
     Percent100ths mStepValue;
@@ -95,11 +90,6 @@ protected:
 class LatchingMembers
 {
 protected:
-    //NLatchingEnum mCurrentLatching;
-	//LatchingEnum mLatchingEnum;
-
-    //NLatchingEnum mTargetLatching;
-	//TagLatchingEnum mTagLatchingEnum;
 };
 
 class LatchingOnlyMembers
@@ -111,10 +101,8 @@ protected:
 class UnitMembers
 {
 protected:
-    //UnitEnum mUnit;
 	ClosureUnitEnum mUnit;
 
-    //SignedValuesRangeStruct mUnitRange;
 	UnitRangeStruct mUnitRange;
 };
 
@@ -169,7 +157,7 @@ void ChipLogOptionalValue(const chip::Optional<U> & item, const char * message, 
     }
 }
 
-class Delegate; //((((((( bacause the Instance class is initialized before the Deleagte class )))))))
+class Delegate;
 
 /**
  * This class provides the base implementation for the server side of the ClosureDimension cluster(s) as well as an API for
@@ -335,16 +323,25 @@ public:
 	virtual ~Delegate() = default;
 	
     //void SetEndpointId(EndpointId aEndpoint) { mEndpointId = aEndpoint; }
-	//EndpointId GetEndpointId() { return mEndpointId; }	
-	
+	//EndpointId GetEndpointId() { return mEndpointId; }		
 	//void mDelegate.SetClusterId(ClusterId aClusterId) { mClusterId = aClusterId; }
 	//ClusterId GetClusterId() { return aClusterId; }    	
 
-	// Command callback Delegates called from command handler - To handle Command Callback in application
-	virtual void SetStepCallback()               = 0;
-	virtual void SetSetTargetCallback()          = 0;
-	
-	// Attribute Delegates - Get attribute methods (Called via AttributeAccessInterface read())
+	// Command callback Delegates
+
+     /**
+     * Handle Command Callback in application: Step
+      * It should report Status::Success if successful and may
+      * return other Status codes if it fails
+     */
+	virtual Protocols::InteractionModel::Status SetStepCallback(uint8_t direction, uint16_t numberOfSteps, uint8_t speed) = 0;
+
+     /**
+     * Handle Command Callback in application: SetTarget
+      * It should report Status::Success if successful and may
+      * return other Status codes if it fails
+     */
+	virtual Protocols::InteractionModel::Status SetSetTargetCallback(Percent100ths positioning, uint8_t tagLatch, uint8_t speed) = 0;
 	
 protected:
     //EndpointId mEndpointId = 0;

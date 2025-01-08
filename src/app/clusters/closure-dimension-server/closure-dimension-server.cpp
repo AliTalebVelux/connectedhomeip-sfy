@@ -120,7 +120,7 @@ CHIP_ERROR Instance::Init()
 template <bool Enabled = FeaturePositioningEnabled || FeatureLatchingEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
 CHIP_ERROR Instance::SetCurrent(Optional<Percent100ths> aPositioning, Optional<LatchingEnum> aLatch, Optional<Globals::ThreeLevelAutoEnum> aSpeed)
 {
-	NCurrentStruct newCurrent = this->mCurrent;
+	NCurrentStruct nullableCurrent = this->mCurrent;
 	CurrentStruct current = { .kPosition = 0, .kLatching = 1, .kSpeed = 2 }; // ToDo is this needed?
 	
 	if (aPositioning.HasValue())
@@ -131,7 +131,7 @@ CHIP_ERROR Instance::SetCurrent(Optional<Percent100ths> aPositioning, Optional<L
 		}
 
 		current.kPosition = aPositioning.Value();
-		newCurrent.SetNonNull(current);
+		nullableCurrent.SetNonNull(current);
 	}
 	if (aSpeed.HasValue())
 	{
@@ -141,7 +141,7 @@ CHIP_ERROR Instance::SetCurrent(Optional<Percent100ths> aPositioning, Optional<L
 		}
 
 		current.kSpeed = aSpeed.Value();
-		newCurrent.SetNonNull(current);
+		nullableCurrent.SetNonNull(current);
 	}	
 	if (aLatch.HasValue())
 	{
@@ -151,19 +151,19 @@ CHIP_ERROR Instance::SetCurrent(Optional<Percent100ths> aPositioning, Optional<L
 		}
 
 		current.kLatching = aLatch.Value();
-		newCurrent.SetNonNull(current);
+		nullableCurrent.SetNonNull(current);
 	}		
 
 	if (!aSpeed.HasValue() && !aPositioning.HasValue() && !aLatch.HasValue())
 	{
-		nullablePositioning.SetNull();
+		nullableCurrent.SetNull();
 		ChipLogDetail(NotSpecified, "set Nullable");
 	}
 
 	// Check to see if a change has ocurred
-	VerifyOrReturnError(this->mCurrent == newCurrent, CHIP_NO_ERROR); // ToDo check this: to avoid reporting attribute change if the same value is sent again 
+	VerifyOrReturnError(this->mCurrent != nullableCurrent, CHIP_NO_ERROR); 
 	
-	this->mCurrent = newCurrent;
+	this->mCurrent = nullableCurrent;
 	MatterReportingAttributeChangeCallback(mEndpointId, mClusterId, Attributes::Current::Id);
 
 	return CHIP_NO_ERROR;
@@ -172,8 +172,8 @@ CHIP_ERROR Instance::SetCurrent(Optional<Percent100ths> aPositioning, Optional<L
 template <bool Enabled = FeaturePositioningEnabled || FeatureLatchingEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
 CHIP_ERROR Instance::CHIP_ERROR SetTarget(Optional<Percent100ths> aPositioning, Optional<TagLatchEnum> aTagLatch, Optional<Globals::ThreeLevelAutoEnum> aSpeed)
 {
-	NTargetStruct newTarget = this->mTarget;
-	TargetStruct target = { .kPosition = 0, .kTagLatch = 1, .kSpeed = 2 }; // ToDo is this needed?
+	NTargetStruct nullableTarget = this->mTarget;
+	TargetStruct target = { .kPosition = 0, .kTagLatch = 1, .kSpeed = 2 };
 
 	if (aPositioning.HasValue())
 	{
@@ -182,8 +182,8 @@ CHIP_ERROR Instance::CHIP_ERROR SetTarget(Optional<Percent100ths> aPositioning, 
 			return CHIP_ERROR_INVALID_ARGUMENT;
 		}
 
-		target.kPosition = aPositioning.Value();
-		newTarget.SetNonNull(target);
+		newTarget.kPosition = aPositioning.Value();
+		nullableTarget.SetNonNull(newTarget);
 	}
 	if (aSpeed.HasValue())
 	{
@@ -192,8 +192,8 @@ CHIP_ERROR Instance::CHIP_ERROR SetTarget(Optional<Percent100ths> aPositioning, 
 			return CHIP_ERROR_INVALID_ARGUMENT;
 		}
 
-		target.kSpeed = aSpeed.Value();
-		newTarget.SetNonNull(target);
+		newTarget.kSpeed = aSpeed.Value();
+		nullableTarget.SetNonNull(newTarget);
 	}
 	if (aLatch.HasValue())
 	{
@@ -202,15 +202,21 @@ CHIP_ERROR Instance::CHIP_ERROR SetTarget(Optional<Percent100ths> aPositioning, 
 			return CHIP_ERROR_INVALID_ARGUMENT;
 		}
 
-		target.kLatching = kTagLatch.Value();
-		newTarget.SetNonNull(target);
+		newTarget.kLatching = kTagLatch.Value();
+		nullableTarget.SetNonNull(newTarget);
+	}
+
+	if (!aPositioning.HasValue() && !aTagLatch.HasValue() && !aSpeed.HasValue())
+	{
+		nullableTarget.SetNull();
+		ChipLogDetail(NotSpecified, "set Nullable");
 	}
 
 	// Check to see if a change has ocurred
-	VerifyOrReturnError(this->mTarget == newTarget, CHIP_NO_ERROR); // ToDo check this: to avoid reporting attribute change if the same value is sent again 
+	VerifyOrReturnError(this->mTarget != nullableTarget, CHIP_NO_ERROR); 
 	
-	this->mTarget = newTarget;
-	MatterReportingAttributeChangeCallback(mEndpointId, mClusterId, Attributes::Current::Id);	
+	this->mTarget = nullableTarget;
+	MatterReportingAttributeChangeCallback(mEndpointId, mClusterId, Attributes::Target::Id);
 }
 
 template <bool Enabled = FeaturePositioningEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
@@ -412,7 +418,7 @@ void Instance::InvokeCommand(HandlerContext & handlerContext)
 				HandleStepCommand(handlerContext, requestPayload);
 			break;
 
-		case Commands::SetTarget
+		case Commands::SetTarget::Id:
 				ChipLogDetail(Zcl, "%s ClDim::Cmd::Latch()", GetClusterName());
 				Commands::Latch::DecodableType requestPayload;
 				handlerContext.SetCommandHandled();
@@ -454,27 +460,17 @@ CHIP_ERROR Instance::Read(const ConcreteReadAttributePath & aPath, AttributeValu
 		ChipLogDetail(Zcl, "%s ClDim::Read::Current", GetClusterName());
 		if constexpr (FeaturePositioningEnabled)
 		{
-			ReturnErrorOnFailure(aEncoder.Encode(this->mCurrentPositioning));
+			ReturnErrorOnFailure(aEncoder.Encode(this->mCurrent));
 			isAttributeSupported = true;
 		}
-		if(FeatureLatchingEnabled)
-		{
-			ReturnErrorOnFailure(aEncoder.Encode(this->mCurrentLatching));
-            isAttributeSupported = true;
-		}		
 		break;
 
 	case Attributes::Target::Id:
 		ChipLogDetail(Zcl, "%s ClDim::Read::Target", GetClusterName());
 		if constexpr (FeaturePositioningEnabled)
 		{
-			ReturnErrorOnFailure(aEncoder.Encode(this->mTargetPositioning));
+			ReturnErrorOnFailure(aEncoder.Encode(this->mTarget));
 			isAttributeSupported = true;
-		}
-		if(FeatureLatchingEnabled)
-		{
-			ReturnErrorOnFailure(aEncoder.Encode(this->mTargetLatching));
-            isAttributeSupported = true;
 		}
 		break;
 
@@ -596,13 +592,45 @@ void Instance::HandleStepCommand(HandlerContext & ctx, const Commands::Step::Dec
 
 void Instance::HandleSetTargetCommand(HandlerContext & ctx, const Commands::SetTarget::DecodableType & req)
 {
+	 Status status = Status::Success;
+
+	 auto & position = req.position;
+	 auto & tagLatch = reg.tagLatch;
+	 auto & speed    = reg.speed;
+
 	ChipLogDetail(Zcl, "%s ClDim: HandleLatchCommand", GetClusterName());
 
-	// Delegate forwarding
-	mDelegate.SetSetTargetCallback();
-	
+
 	// Error handling
-	ctx.mCommandHandler.AddStatus(ctx.mRequestPath, Protocols::InteractionModel::Status::Success);
+	if constexpr (FeaturePositioningEnabled)
+	{
+		if(position > kMaxPercent100ths)
+		{
+			ctx.mCommandHandler.AddStatus(ctx.mRequestPath, Status::ConstraintError);
+			return;
+		}
+	}
+	if constexpr (FeatureLatchingEnabled)
+	{
+		if(tagLatch >= TagLatchEnum::kUnknownEnumValue)
+		{
+			ctx.mCommandHandler.AddStatus(ctx.mRequestPath, Status::ConstraintError);
+			return;
+		}
+	}
+	if constexpr (FeatureSpeedEnabled)
+	{
+		if(speed >= Globals::ThreeLevelAutoEnum::kUnknownEnumValue)
+		{
+			ctx.mCommandHandler.AddStatus(ctx.mRequestPath, Status::ConstraintError);
+			return;
+		}
+	}
+
+	// Delegate forwarding
+	status = mDelegate.SetSetTargetCallback(position, tagLatch, speed);
+	
+	ctx.mCommandHandler.AddStatus(ctx.mRequestPath, status);
 }
 
 uint32_t Instance::GenerateFeatureMap() const

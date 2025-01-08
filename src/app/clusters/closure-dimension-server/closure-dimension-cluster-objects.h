@@ -44,10 +44,10 @@ static constexpr std::array<Info, 5> const AliasedClusters = {{
 // Redeclare alias toward the first Cluster dimension for common DataType
 /* Enum, BitMap, Structure */
 
-//using UnitEnum = Closure1stDimension::UnitEnum; //--> Clusters::detail::UnitEnum;
 using ClosureUnitEnum = Closure1stDimension::ClosureUnitEnum; //--> Clusters::detail::UnitEnum;
 
-//using NLatchingEnum = Closure1stDimension::Attributes::CurrentLatching::TypeInfo::Type; // Nullable
+using LatchingEnum = Closure1stDimension::LatchingEnum;
+using TagLatchEnum = Closure1stDimension::TagLatchEnum;
 
 using TranslationDirectionEnum = Closure1stDimension::TranslationDirectionEnum;
 using RotationAxisEnum = Closure1stDimension::RotationAxisEnum;
@@ -55,7 +55,6 @@ using ModulationTypeEnum = Closure1stDimension::ModulationTypeEnum;
 using LatchingAxisEnum = Closure1stDimension::LatchingAxisEnum;
 using OverflowEnum = Closure1stDimension::OverflowEnum;
 
-//using SignedValuesRangeStruct = Closure1stDimension::Structs::SignedValuesRangeStruct::Type;
 using UnitRangeStruct = Closure1stDimension::Structs::UnitRangeStruct::Type;
 
 using RangePercent100thsStruct = Closure1stDimension::Structs::RangePercent100thsStruct::Type;
