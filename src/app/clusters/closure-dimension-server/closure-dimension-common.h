@@ -38,7 +38,7 @@ const char * GetFeatureName(Feature aFeature);
 
 // Instance::Instance(EndpointId aEndpointId, ClusterId aClusterId,
 //         RotationAxisEnum aRotationAxis,
-//         OverFlowEnum aOverFlow,
+//         OverflowEnum aOverflow,
 //         ModulationTypeEnum aModulation,
 //         LatchingAxisEnum aLatchingAxis,
 //         TranslationDirectionEnum aTranslationDirection);

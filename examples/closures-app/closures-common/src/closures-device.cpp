@@ -30,7 +30,7 @@ static constexpr char strLogN[] = CL_RED "N" CL_CLEAR;
 using namespace chip::app::Clusters::ClosureDimension;
 static Instance gLatchOnlyInstance    = ClosureLatchOnlyInstance(                       chip::EndpointId(1), Closure1stDimension::Id, LatchingAxisEnum::kVerticalTranslation);
 static Instance gModulationInstance   = ClosureModulationInstance<false, false, false> (chip::EndpointId(1), Closure2ndDimension::Id, ModulationTypeEnum::kStripsAlignment);
-static Instance gRotationInstance     = ClosureRotationInstance<true, false, false>    (chip::EndpointId(1), Closure3rdDimension::Id, RotationAxisEnum::kLeft, OverFlowEnum::kNoOverFlow);
+static Instance gRotationInstance     = ClosureRotationInstance<true, false, false>    (chip::EndpointId(1), Closure3rdDimension::Id, RotationAxisEnum::kLeft, OverflowEnum::kNoOverflow);
 static Instance gTranslationInstance  = ClosureTranslationInstance<false, false, false>(chip::EndpointId(1), Closure4thDimension::Id, TranslationDirectionEnum::kHorizontalSymmetry);
 static Instance gAllFeatureTrInstance = ClosureTranslationInstance<true, true, true>   (chip::EndpointId(1), Closure5thDimension::Id, TranslationDirectionEnum::kDepthMask);
 
@@ -89,7 +89,7 @@ void ClosuresDevice::ClosureDimensionsSetup(chip::EndpointId endpoint)
     chip::Optional<Globals::ThreeLevelAutoEnum> aSpeed;
     aPositioning.SetValue(2);
     aSpeed.SetValue(Globals::ThreeLevelAutoEnum::kMedium);
-    gModulationInstance.SetUnitAndRange(UnitEnum::kDegree, 2, 5405);
+    gModulationInstance.SetUnitAndRange(ClosureUnitEnum::kDegree, 2, 5405);
     gModulationInstance.SetResolutionAndStepValue(5000, 3);
     gModulationInstance.SetTargetPositioning(aPositioning, aSpeed);
     gModulationInstance.SetCurrentPositioning(aPositioning, aSpeed);
@@ -101,7 +101,7 @@ void ClosuresDevice::ClosureDimensionsSetup(chip::EndpointId endpoint)
 
     /* Translation */
     gTranslationInstance.Init();
-    gTranslationInstance.SetTranslationDirection(TranslationDirectionEnum::kCeilingSymmetry);
+    gTranslationInstance.SetTranslationDirection(TranslationDirectionEnum::kCeilingCenteredSymmetry);
 
 #if defined(CHIP_IMGUI_ENABLED) && CHIP_IMGUI_ENABLED
     AddImGuiClosureDimensionInstance(gTranslationInstance.GetEndpoint(), gTranslationInstance.GetClusterName(), gTranslationInstance.GetFeatureMap());
@@ -110,7 +110,7 @@ void ClosuresDevice::ClosureDimensionsSetup(chip::EndpointId endpoint)
     /* Rotation */
     gRotationInstance.Init();
     gRotationInstance.SetRotationAxis(RotationAxisEnum::kCenteredHorizontal);
-    gRotationInstance.SetOverFlow(OverFlowEnum::kLeftInside);
+    gRotationInstance.SetOverFlow(OverflowEnum::kLeftInside);
 
 #if defined(CHIP_IMGUI_ENABLED) && CHIP_IMGUI_ENABLED
     AddImGuiClosureDimensionInstance(gRotationInstance.GetEndpoint(), gRotationInstance.GetClusterName(), gRotationInstance.GetFeatureMap());

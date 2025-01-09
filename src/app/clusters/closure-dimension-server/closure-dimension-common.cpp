@@ -38,8 +38,8 @@ const char * GetFeatureName(Feature aFeature)
     {
     case Feature::kPositioning:
         return "Positioning";
-    case Feature::kLatching:
-        return "Latching";
+    case Feature::kMotionLatching:
+        return "MotionLatching";
     case Feature::kUnit:
         return "Unit";
     case Feature::kLimitation:
