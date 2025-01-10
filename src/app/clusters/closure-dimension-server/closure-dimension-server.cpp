@@ -579,15 +579,36 @@ CHIP_ERROR Instance::Read(const ConcreteReadAttributePath & aPath, AttributeValu
 
 void Instance::HandleStepCommand(HandlerContext & ctx, const Commands::Step::DecodableType & req)
 {
+	Status status = Status::Success;
+
+	auto & direction     = req.direction;
+	auto & numberOfSteps = reg.numberOfSteps;
+	auto & speed         = reg.speed;
+
 	ChipLogDetail(Zcl, "%s ClDim: HandleStepCommand", GetClusterName());
 	ChipLogDetail(Zcl, "%s ClDim: dir=%u #Step=%u cId=0x%04X/0x%04X", GetClusterName(), to_underlying(req.direction), req.numberOfSteps, req.GetClusterId(), mClusterId);
-	LogStepsRequest(req);
-
-	// Delegate forwarding
-	mDelegate.SetStepCallback();
 	
 	// Error handling
-	ctx.mCommandHandler.AddStatus(ctx.mRequestPath, Protocols::InteractionModel::Status::Success);
+	if(numberOfSteps == 0)
+	{
+		ctx.mCommandHandler.AddStatus(ctx.mRequestPath, Protocols::InteractionModel::Status::Success);
+		return;
+	}
+	if(direction >= StepDirectionEnum::kUnknownEnumValue)
+	{
+		ctx.mCommandHandler.AddStatus(ctx.mRequestPath, Status::ConstraintError);
+		return;
+	}
+	if(speed >= Globals::ThreeLevelAutoEnum::kUnknownEnumValue)
+	{
+		ctx.mCommandHandler.AddStatus(ctx.mRequestPath, Status::ConstraintError);
+		return;
+	}
+
+    // Delegate forwarding
+	status = mDelegate.SetStepCallback(direction, numberOfSteps, speed);
+
+	ctx.mCommandHandler.AddStatus(ctx.mRequestPath, status);
 }
 
 void Instance::HandleSetTargetCommand(HandlerContext & ctx, const Commands::SetTarget::DecodableType & req)
