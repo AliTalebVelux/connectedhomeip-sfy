@@ -170,7 +170,7 @@ CHIP_ERROR Instance::SetCurrent(Optional<Percent100ths> aPositioning, Optional<L
 }
 
 template <bool Enabled = FeaturePositioningEnabled || FeatureLatchingEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-CHIP_ERROR Instance::CHIP_ERROR SetTarget(Optional<Percent100ths> aPositioning, Optional<TagLatchEnum> aTagLatch, Optional<Globals::ThreeLevelAutoEnum> aSpeed)
+CHIP_ERROR Instance::SetTarget(Optional<Percent100ths> aPositioning, Optional<TagLatchEnum> aTagLatch, Optional<Globals::ThreeLevelAutoEnum> aSpeed)
 {
 	NTargetStruct nullableTarget = this->mTarget;
 	TargetStruct target = { .kPosition = 0, .kTagLatch = 1, .kSpeed = 2 };
@@ -217,10 +217,12 @@ CHIP_ERROR Instance::CHIP_ERROR SetTarget(Optional<Percent100ths> aPositioning, 
 	
 	this->mTarget = nullableTarget;
 	MatterReportingAttributeChangeCallback(mEndpointId, mClusterId, Attributes::Target::Id);
+
+	return CHIP_NO_ERROR;
 }
 
 template <bool Enabled = FeaturePositioningEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-CHIP_ERROR Instance::CHIP_ERROR SetResolutionAndStepValue(Percent100ths aResolutionPercent100ths, uint8_t aStepCoef)
+CHIP_ERROR Instance::SetResolutionAndStepValue(Percent100ths aResolutionPercent100ths, uint8_t aStepCoef)
 {
 	//
 	if (0 == aResolutionPercent100ths)
@@ -260,7 +262,7 @@ CHIP_ERROR Instance::CHIP_ERROR SetResolutionAndStepValue(Percent100ths aResolut
 }
 
 template <bool Enabled = FeatureUnitEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-CHIP_ERROR Instance::CHIP_ERROR SetUnitAndRange(ClosureUnitEnum aUnit, int16_t aMin, int16_t aMax)
+CHIP_ERROR Instance::SetUnitAndRange(ClosureUnitEnum aUnit, int16_t aMin, int16_t aMax)
 {
 	VerifyOrReturnError(aMax > aMin, CHIP_ERROR_INVALID_ARGUMENT);
 	VerifyOrReturnError(EnsureKnownEnumValue(aUnit) != ClosureUnitEnum::kUnknownEnumValue, CHIP_ERROR_INVALID_ARGUMENT);
@@ -284,7 +286,7 @@ CHIP_ERROR Instance::CHIP_ERROR SetUnitAndRange(ClosureUnitEnum aUnit, int16_t a
 }
 
 template <bool Enabled = FeatureLimitationEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-CHIP_ERROR Instance::CHIP_ERROR SetLimitRange(Optional<Percent100ths> aMin, Optional<Percent100ths> aMax)
+CHIP_ERROR Instance::SetLimitRange(Optional<Percent100ths> aMin, Optional<Percent100ths> aMax)
 {
 	//DataModel::Nullable<LatchingEnum> oldLatching = nullableLatching;
 	NRangePercent100thsStruct limitRange = this->mLimitRange;
@@ -332,7 +334,7 @@ CHIP_ERROR Instance::CHIP_ERROR SetLimitRange(Optional<Percent100ths> aMin, Opti
 }
 
 template <bool Enabled = FeatureTranslationEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-CHIP_ERROR Instance::CHIP_ERROR SetTranslationDirection(TranslationDirectionEnum aTranslationDirection)
+CHIP_ERROR Instance::SetTranslationDirection(TranslationDirectionEnum aTranslationDirection)
 {
 	VerifyOrReturnError(EnsureKnownEnumValue(aTranslationDirection) != TranslationDirectionEnum::kUnknownEnumValue, CHIP_ERROR_INVALID_ARGUMENT);
 	// Check to see if a change has ocurred
@@ -344,7 +346,7 @@ CHIP_ERROR Instance::CHIP_ERROR SetTranslationDirection(TranslationDirectionEnum
 }
 
 template <bool Enabled = FeatureRotationEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-CHIP_ERROR Instance::CHIP_ERROR SetRotationAxis(RotationAxisEnum aRotationAxis)
+CHIP_ERROR Instance::SetRotationAxis(RotationAxisEnum aRotationAxis)
 {
 	VerifyOrReturnError(EnsureKnownEnumValue(aRotationAxis) != RotationAxisEnum::kUnknownEnumValue, CHIP_ERROR_INVALID_ARGUMENT);
 	// Check to see if a change has ocurred
@@ -356,7 +358,7 @@ CHIP_ERROR Instance::CHIP_ERROR SetRotationAxis(RotationAxisEnum aRotationAxis)
 }
 
 template <bool Enabled = FeatureRotationEnabled || FeatureLatchingEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-CHIP_ERROR Instance::CHIP_ERROR SetOverflow(OverflowEnum aOverflow)
+CHIP_ERROR Instance::SetOverflow(OverflowEnum aOverflow)
 {
 	VerifyOrReturnError(EnsureKnownEnumValue(aOverflow) != OverflowEnum::kUnknownEnumValue, CHIP_ERROR_INVALID_ARGUMENT);
 	// Check to see if a change has ocurred
@@ -368,7 +370,7 @@ CHIP_ERROR Instance::CHIP_ERROR SetOverflow(OverflowEnum aOverflow)
 }
 
 template <bool Enabled = FeatureModulationEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-CHIP_ERROR Instance::CHIP_ERROR SetModulationType(ModulationTypeEnum aModulationType)
+CHIP_ERROR Instance::SetModulationType(ModulationTypeEnum aModulationType)
 {
 	VerifyOrReturnError(EnsureKnownEnumValue(aModulationType) != ModulationTypeEnum::kUnknownEnumValue, CHIP_ERROR_INVALID_ARGUMENT);
 	// Check to see if a change has ocurred
@@ -381,7 +383,7 @@ CHIP_ERROR Instance::CHIP_ERROR SetModulationType(ModulationTypeEnum aModulation
 }
 
 template <bool Enabled = FeatureLatchingEnabled && !FeaturePositioningEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-CHIP_ERROR Instance::CHIP_ERROR SetLatchingAxis(LatchingAxisEnum aLatchingAxis)
+CHIP_ERROR Instance::SetLatchingAxis(LatchingAxisEnum aLatchingAxis)
 {
 	VerifyOrReturnError(EnsureKnownEnumValue(aLatchingAxis) != LatchingAxisEnum::kUnknownEnumValue, CHIP_ERROR_INVALID_ARGUMENT);
 	// Check to see if a change has ocurred
