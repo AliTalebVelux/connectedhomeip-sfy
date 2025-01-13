@@ -231,34 +231,42 @@ public:
 
 	// ToDO: SetTaglist()
 
-	template <bool Enabled = FeaturePositioningEnabled || FeatureLatchingEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>	
+    template <bool Enabled = FeaturePositioningEnabled || FeatureLatchingEnabled, typename std::enable_if_t<Enabled, CHIP_ERROR>> 
 	CHIP_ERROR SetCurrent(Optional<Percent100ths> aPositioning, Optional<LatchingEnum> aLatch, Optional<Globals::ThreeLevelAutoEnum> aSpeed);
 
-	template <bool Enabled = FeaturePositioningEnabled || FeatureLatchingEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>	
+	template <bool Enabled = FeaturePositioningEnabled || FeatureLatchingEnabled, typename std::enable_if_t<Enabled, CHIP_ERROR>>	
 	CHIP_ERROR SetTarget(Optional<Percent100ths> aPositioning, Optional<TagLatchEnum> aTagLatch, Optional<Globals::ThreeLevelAutoEnum> aSpeed);
 	
-	template <bool Enabled = FeaturePositioningEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
+	// template <bool Enabled = FeaturePositioningEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
+    template <bool Enabled = FeaturePositioningEnabled, typename std::enable_if_t<Enabled, CHIP_ERROR>>
 	CHIP_ERROR SetResolutionAndStepValue(Percent100ths aResolutionPercent100ths, uint8_t aStepCoef);
 	
-	template <bool Enabled = FeatureUnitEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
+	// ++template <bool Enabled = FeatureUnitEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
+    template <bool Enabled = FeatureUnitEnabled, typename std::enable_if_t<Enabled, CHIP_ERROR>>
 	CHIP_ERROR SetUnitAndRange(ClosureUnitEnum aUnit, int16_t aMin, int16_t aMax);
 	
-	template <bool Enabled = FeatureLimitationEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-	CHIP_ERROR SetLimitRange(Optional<Percent100ths> aMin, Optional<Percent100ths> aMax);
+	// ++template <bool Enabled = FeatureLimitationEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
+    template <bool Enabled = FeatureLimitationEnabled, typename std::enable_if_t<Enabled, CHIP_ERROR>>
+	CHIP_ERROR SetLimitRange(Percent100ths aMin, Percent100ths aMax);
 	
-	template <bool Enabled = FeatureTranslationEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
+	// ++template <bool Enabled = FeatureTranslationEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
+    template <bool Enabled = FeatureTranslationEnabled, typename std::enable_if_t<Enabled, CHIP_ERROR>>
 	CHIP_ERROR SetTranslationDirection(TranslationDirectionEnum aTranslationDirection);
 	
-	template <bool Enabled = FeatureRotationEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
+	// ++template <bool Enabled = FeatureRotationEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
+    template <bool Enabled = FeatureRotationEnabled, typename std::enable_if_t<Enabled, CHIP_ERROR>>
 	CHIP_ERROR SetRotationAxis(RotationAxisEnum aRotationAxis);
 	
-	template <bool Enabled = FeatureRotationEnabled || FeatureLatchingEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
+	// ++template <bool Enabled = FeatureRotationEnabled || FeatureLatchingEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
+    template <bool Enabled = FeatureRotationEnabled || FeatureLatchingEnabled, typename std::enable_if_t<Enabled, CHIP_ERROR>>
 	CHIP_ERROR SetOverflow(OverflowEnum aOverflow);
 	
-	template <bool Enabled = FeatureModulationEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
+	// ++template <bool Enabled = FeatureModulationEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
+    template <bool Enabled = FeatureModulationEnabled, typename std::enable_if_t<Enabled, CHIP_ERROR>>
 	CHIP_ERROR SetModulationType(ModulationTypeEnum aModulationType);
 	
-	template <bool Enabled = FeatureLatchingEnabled && !FeaturePositioningEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
+	// ++template <bool Enabled = FeatureLatchingEnabled && !FeaturePositioningEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
+    template <bool Enabled = FeatureLatchingEnabled, typename std::enable_if_t<Enabled, CHIP_ERROR>>
 	CHIP_ERROR SetLatchingAxis(LatchingAxisEnum aLatchingAxis);
 
 	EndpointId GetEndpoint() const { return mEndpointId; }
@@ -334,14 +342,14 @@ public:
       * It should report Status::Success if successful and may
       * return other Status codes if it fails
      */
-	virtual Protocols::InteractionModel::Status SetStepCallback(uint8_t direction, uint16_t numberOfSteps, uint8_t speed) = 0;
+	virtual Protocols::InteractionModel::Status SetStepCallback(const uint8_t direction, const uint16_t numberOfSteps, const uint8_t speed) = 0;
 
      /**
      * Handle Command Callback in application: SetTarget
       * It should report Status::Success if successful and may
       * return other Status codes if it fails
      */
-	virtual Protocols::InteractionModel::Status SetSetTargetCallback(Percent100ths positioning, uint8_t tagLatch, uint8_t speed) = 0;
+	virtual Protocols::InteractionModel::Status SetSetTargetCallback(uint16_t positioning, uint8_t tagLatch, uint8_t speed) = 0;
 	
 protected:
     //EndpointId mEndpointId = 0;

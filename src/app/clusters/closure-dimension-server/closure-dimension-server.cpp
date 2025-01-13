@@ -32,12 +32,28 @@ using namespace chip::app::Clusters::ClosureDimension;
 using namespace chip::app::Clusters::ClosureDimension::Attributes;
 using chip::Protocols::InteractionModel::Status;
 
+// Define a macro for the template parameters
+#define INSTANCE_TEMPLATE_PARAMS \
+    template <bool FeaturePositioningEnabled, \
+              bool FeatureLatchingEnabled, \
+              bool FeatureUnitEnabled, \
+              bool FeatureSpeedEnabled, \
+              bool FeatureLimitationEnabled, \
+              bool FeatureRotationEnabled, \
+              bool FeatureTranslationEnabled, \
+              bool FeatureModulationEnabled>
+
+#define INSTANCE_TEMPLATE_CLASS \
+    Instance<FeaturePositioningEnabled, FeatureLatchingEnabled, FeatureUnitEnabled, FeatureSpeedEnabled, \
+             FeatureLimitationEnabled, FeatureRotationEnabled, FeatureTranslationEnabled, FeatureModulationEnabled>
+
 namespace chip {
 namespace app {
 namespace Clusters {
 namespace ClosureDimension {
 
-Instance::Instance(Delegate & aDelegate, EndpointId aEndpointId, ClusterId aClusterId, //(((((((here - reference based delegate)))))))
+INSTANCE_TEMPLATE_PARAMS
+INSTANCE_TEMPLATE_CLASS::Instance(Delegate & aDelegate, EndpointId aEndpointId, ClusterId aClusterId,
         RotationAxisEnum aRotationAxis,
         OverflowEnum aOverflow,
         ModulationTypeEnum aModulation,
@@ -75,19 +91,21 @@ Instance::Instance(Delegate & aDelegate, EndpointId aEndpointId, ClusterId aClus
 	//mDelegate.SetClusterId(mClusterId); //(((((((hand cluster id to delegate))))
 }
 
-Instance::~Instance() override
+INSTANCE_TEMPLATE_PARAMS
+INSTANCE_TEMPLATE_CLASS::~Instance()
 {
-	ChipLogDetail(Zcl, "%s ClDim Instance.Destructor(): ID=0x%02lX EP=%u", GetClusterName(), long(mClusterId), mEndpointId);
+	// ++++ ChipLogDetail(Zcl, "%s ClDim Instance.Destructor(): ID=0x%02lX EP=%u", GetClusterName(), long(mClusterId), mEndpointId);
 	CommandHandlerInterfaceRegistry::Instance().UnregisterCommandHandler(this);
 	AttributeAccessInterfaceRegistry::Instance().Unregister(this);
 }
 
-CHIP_ERROR Instance::Init()
+INSTANCE_TEMPLATE_PARAMS
+CHIP_ERROR INSTANCE_TEMPLATE_CLASS::Init()
 {
 	ChipLogDetail(NotSpecified, "%s ClDim Init Registration", GetClusterName());
 
 	// Conformances for Features preChecked
-	static_assert( FeaturePositioningEnabled ||  FeatureLatchingEnabled   , "Feature: At least one of Positioning and/or Latching should be enabled");
+/* 	static_assert( FeaturePositioningEnabled ||  FeatureLatchingEnabled   , "Feature: At least one of Positioning and/or Latching should be enabled");
 	static_assert( FeaturePositioningEnabled || !FeatureUnitEnabled       , "Feature: Unit        requires Positioning to be true");
 	static_assert( FeaturePositioningEnabled || !FeatureSpeedEnabled      , "Feature: Speed       requires Positioning to be true");
 	static_assert( FeaturePositioningEnabled || !FeatureLimitationEnabled , "Feature: Limitation  requires Positioning to be true");
@@ -98,7 +116,7 @@ CHIP_ERROR Instance::Init()
 	static_assert( FeatureTranslationEnabled || !FeatureRotationEnabled   || !FeatureModulationEnabled , "Features: RO vs MD, exclusivity unmet");
 	static_assert( FeatureRotationEnabled    || !FeatureModulationEnabled || !FeatureTranslationEnabled, "Features: MD vs TR, exclusivity unmet");
 	static_assert(!FeatureTranslationEnabled ||  FeatureRotationEnabled   ||  FeatureModulationEnabled || FeatureTranslationEnabled, "Features: at least one among MD/RO/TR");
-	static_assert(!FeatureRotationEnabled    || !FeatureModulationEnabled || !FeatureTranslationEnabled, "Features: MD vs TR vs RO, exclusivity unmet");
+	static_assert(!FeatureRotationEnabled    || !FeatureModulationEnabled || !FeatureTranslationEnabled, "Features: MD vs TR vs RO, exclusivity unmet"); */
 
 	VerifyOrReturnError(IsValidAliasCluster(), CHIP_ERROR_INCORRECT_STATE);
 
@@ -110,18 +128,19 @@ CHIP_ERROR Instance::Init()
 	ReturnErrorOnFailure(CommandHandlerInterfaceRegistry::Instance().RegisterCommandHandler(this));
 
 	mFeatureMap = GenerateFeatureMap();
-	LogFeatureMap(mFeatureMap);
+	// ToDo LogFeatureMap(mFeatureMap);
 
 	ChipLogDetail(NotSpecified, "%s ClDim Registered as Ep[%u] Id=0x%04X", GetClusterName(), mEndpointId, mClusterId);
 
 	return CHIP_NO_ERROR;
 }
 
-template <bool Enabled = FeaturePositioningEnabled || FeatureLatchingEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-CHIP_ERROR Instance::SetCurrent(Optional<Percent100ths> aPositioning, Optional<LatchingEnum> aLatch, Optional<Globals::ThreeLevelAutoEnum> aSpeed)
+INSTANCE_TEMPLATE_PARAMS
+template <bool Enabled, typename std::enable_if_t<Enabled, CHIP_ERROR>>
+CHIP_ERROR INSTANCE_TEMPLATE_CLASS::SetCurrent(Optional<Percent100ths> aPositioning, Optional<LatchingEnum> aLatch, Optional<Globals::ThreeLevelAutoEnum> aSpeed)
 {
 	NCurrentStruct nullableCurrent = this->mCurrent;
-	CurrentStruct current = { .kPosition = 0, .kLatching = 1, .kSpeed = 2 }; // ToDo is this needed?
+	CurrentStruct current = { .position = 0, .latching = 1, .speed = 2 }; // ToDo is this needed?
 	
 	if (aPositioning.HasValue())
 	{
@@ -130,27 +149,27 @@ CHIP_ERROR Instance::SetCurrent(Optional<Percent100ths> aPositioning, Optional<L
 			return CHIP_ERROR_INVALID_ARGUMENT;
 		}
 
-		current.kPosition = aPositioning.Value();
+		current.position = aPositioning.Value();
 		nullableCurrent.SetNonNull(current);
 	}
 	if (aSpeed.HasValue())
 	{
-		if (aSpeed >= Globals::ThreeLevelAutoEnum::kUnknownEnumValue)
+		if (aSpeed.Value() >= Globals::ThreeLevelAutoEnum::kUnknownEnumValue)
 		{
 			return CHIP_ERROR_INVALID_ARGUMENT;
 		}
 
-		current.kSpeed = aSpeed.Value();
+		current.speed = aSpeed.Value();
 		nullableCurrent.SetNonNull(current);
 	}	
 	if (aLatch.HasValue())
 	{
-		if (aLatch >= LatchingEnum::kUnknownEnumValue)
+		if (aLatch.Value() >= LatchingEnum::kUnknownEnumValue)
 		{
 			return CHIP_ERROR_INVALID_ARGUMENT;
 		}
 
-		current.kLatching = aLatch.Value();
+		current.latching = aLatch.Value();
 		nullableCurrent.SetNonNull(current);
 	}		
 
@@ -169,11 +188,12 @@ CHIP_ERROR Instance::SetCurrent(Optional<Percent100ths> aPositioning, Optional<L
 	return CHIP_NO_ERROR;
 }
 
-template <bool Enabled = FeaturePositioningEnabled || FeatureLatchingEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-CHIP_ERROR Instance::SetTarget(Optional<Percent100ths> aPositioning, Optional<TagLatchEnum> aTagLatch, Optional<Globals::ThreeLevelAutoEnum> aSpeed)
+INSTANCE_TEMPLATE_PARAMS
+template <bool Enabled, typename std::enable_if_t<Enabled, CHIP_ERROR>>
+CHIP_ERROR INSTANCE_TEMPLATE_CLASS::SetTarget(Optional<Percent100ths> aPositioning, Optional<TagLatchEnum> aTagLatch, Optional<Globals::ThreeLevelAutoEnum> aSpeed)
 {
 	NTargetStruct nullableTarget = this->mTarget;
-	TargetStruct target = { .kPosition = 0, .kTagLatch = 1, .kSpeed = 2 };
+	TargetStruct target = { .position = 0, .tagLatch = 1, .speed = 2 };
 
 	if (aPositioning.HasValue())
 	{
@@ -182,27 +202,27 @@ CHIP_ERROR Instance::SetTarget(Optional<Percent100ths> aPositioning, Optional<Ta
 			return CHIP_ERROR_INVALID_ARGUMENT;
 		}
 
-		target.kPosition = aPositioning.Value();
+		target.position = aPositioning.Value();
 		nullableTarget.SetNonNull(target);
 	}
 	if (aSpeed.HasValue())
 	{
-		if (aSpeed >= Globals::ThreeLevelAutoEnum::kUnknownEnumValue)
+		if (aSpeed.Value() >= Globals::ThreeLevelAutoEnum::kUnknownEnumValue)
 		{
 			return CHIP_ERROR_INVALID_ARGUMENT;
 		}
 
-		target.kSpeed = aSpeed.Value();
+		target.speed = aSpeed.Value();
 		nullableTarget.SetNonNull(target);
 	}
-	if (aLatch.HasValue())
+	if (aTagLatch.HasValue())
 	{
-		if (aLatch >= TagLatchEnum::kUnknownEnumValue)
+		if (aTagLatch.Value() >= TagLatchEnum::kUnknownEnumValue)
 		{
 			return CHIP_ERROR_INVALID_ARGUMENT;
 		}
 
-		target.kLatching = kTagLatch.Value();
+		target.tagLatch = aTagLatch.Value();
 		nullableTarget.SetNonNull(target);
 	}
 
@@ -221,8 +241,9 @@ CHIP_ERROR Instance::SetTarget(Optional<Percent100ths> aPositioning, Optional<Ta
 	return CHIP_NO_ERROR;
 }
 
-template <bool Enabled = FeaturePositioningEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-CHIP_ERROR Instance::SetResolutionAndStepValue(Percent100ths aResolutionPercent100ths, uint8_t aStepCoef)
+INSTANCE_TEMPLATE_PARAMS
+template <bool Enabled, typename std::enable_if_t<Enabled, CHIP_ERROR>>
+CHIP_ERROR INSTANCE_TEMPLATE_CLASS::SetResolutionAndStepValue(Percent100ths aResolutionPercent100ths, uint8_t aStepCoef)
 {
 	//
 	if (0 == aResolutionPercent100ths)
@@ -261,8 +282,9 @@ CHIP_ERROR Instance::SetResolutionAndStepValue(Percent100ths aResolutionPercent1
 	return CHIP_NO_ERROR;
 }
 
-template <bool Enabled = FeatureUnitEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-CHIP_ERROR Instance::SetUnitAndRange(ClosureUnitEnum aUnit, int16_t aMin, int16_t aMax)
+INSTANCE_TEMPLATE_PARAMS
+template <bool Enabled, typename std::enable_if_t<Enabled, CHIP_ERROR>>
+CHIP_ERROR INSTANCE_TEMPLATE_CLASS::SetUnitAndRange(ClosureUnitEnum aUnit, int16_t aMin, int16_t aMax)
 {
 	VerifyOrReturnError(aMax > aMin, CHIP_ERROR_INVALID_ARGUMENT);
 	VerifyOrReturnError(EnsureKnownEnumValue(aUnit) != ClosureUnitEnum::kUnknownEnumValue, CHIP_ERROR_INVALID_ARGUMENT);
@@ -285,56 +307,24 @@ CHIP_ERROR Instance::SetUnitAndRange(ClosureUnitEnum aUnit, int16_t aMin, int16_
 	return CHIP_NO_ERROR;
 }
 
-template <bool Enabled = FeatureLimitationEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-CHIP_ERROR Instance::SetLimitRange(Optional<Percent100ths> aMin, Optional<Percent100ths> aMax)
+INSTANCE_TEMPLATE_PARAMS
+template <bool Enabled, typename std::enable_if_t<Enabled, CHIP_ERROR>>
+CHIP_ERROR INSTANCE_TEMPLATE_CLASS::SetLimitRange(Percent100ths aMin, Percent100ths aMax)
 {
-	//DataModel::Nullable<LatchingEnum> oldLatching = nullableLatching;
-	NRangePercent100thsStruct limitRange = this->mLimitRange;
-	RangePercent100thsStruct limit = { .min = kMinPercent100ths, .max = kMaxPercent100ths };
+	VerifyOrReturnError(aMax > aMin, CHIP_ERROR_INVALID_ARGUMENT);
 
-	if (!aMin.HasValue() && !aMax.HasValue())
-	{
-		limitRange.SetNull();
-		ChipLogDetail(NotSpecified, "set limit range Nullable");
-	}
-
-	if (aMin.HasValue() && aMax.HasValue())
-	{
-		VerifyOrReturnError(aMax.Value() > aMin.Value(), CHIP_ERROR_INVALID_ARGUMENT);
-	}
-
-	if (aMin.HasValue())
-	{
-		limit.min = aMin.Value();
-		limitRange.SetNonNull(limit);
-		ChipLogDetail(NotSpecified, "set limit range min value");
-	}
-
-	if (aMax.HasValue())
-	{
-		limit.max = aMax.Value();
-		limitRange.SetNonNull(limit);
-		ChipLogDetail(NotSpecified, "set limit range max value");
-	}
-
-	this->mLimitRange = limitRange;
-
-	if (this->mLimitRange.IsNull())
-	{
-		ChipLogDetail(NotSpecified, "Limit Null")
-	}
-	else
-	{
-		ChipLogDetail(NotSpecified, "Limit.min=%i Limit.max=%i", this->mLimitRange.Value().min, this->mLimitRange.Value().max);
-	}
-
+	// Check to see if a change has ocurred
+	VerifyOrReturnError(this->mLimitRange.min != aMin || this->mLimitRange.max != aMax, CHIP_NO_ERROR);
+	this->mLimitRange.min = aMin;
+	this->mLimitRange.max = aMax;
 	MatterReportingAttributeChangeCallback(mEndpointId, mClusterId, Attributes::LimitRange::Id);
 
 	return CHIP_NO_ERROR;
 }
 
-template <bool Enabled = FeatureTranslationEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-CHIP_ERROR Instance::SetTranslationDirection(TranslationDirectionEnum aTranslationDirection)
+INSTANCE_TEMPLATE_PARAMS
+template <bool Enabled, typename std::enable_if_t<Enabled, CHIP_ERROR>>
+CHIP_ERROR INSTANCE_TEMPLATE_CLASS::SetTranslationDirection(TranslationDirectionEnum aTranslationDirection)
 {
 	VerifyOrReturnError(EnsureKnownEnumValue(aTranslationDirection) != TranslationDirectionEnum::kUnknownEnumValue, CHIP_ERROR_INVALID_ARGUMENT);
 	// Check to see if a change has ocurred
@@ -345,8 +335,9 @@ CHIP_ERROR Instance::SetTranslationDirection(TranslationDirectionEnum aTranslati
 	return CHIP_NO_ERROR;
 }
 
-template <bool Enabled = FeatureRotationEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-CHIP_ERROR Instance::SetRotationAxis(RotationAxisEnum aRotationAxis)
+INSTANCE_TEMPLATE_PARAMS
+template <bool Enabled, typename std::enable_if_t<Enabled, CHIP_ERROR>>
+CHIP_ERROR INSTANCE_TEMPLATE_CLASS::SetRotationAxis(RotationAxisEnum aRotationAxis)
 {
 	VerifyOrReturnError(EnsureKnownEnumValue(aRotationAxis) != RotationAxisEnum::kUnknownEnumValue, CHIP_ERROR_INVALID_ARGUMENT);
 	// Check to see if a change has ocurred
@@ -357,10 +348,11 @@ CHIP_ERROR Instance::SetRotationAxis(RotationAxisEnum aRotationAxis)
 	return CHIP_NO_ERROR;
 }
 
-template <bool Enabled = FeatureRotationEnabled || FeatureLatchingEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-CHIP_ERROR Instance::SetOverflow(OverflowEnum aOverflow)
+INSTANCE_TEMPLATE_PARAMS
+template <bool Enabled, typename std::enable_if_t<Enabled, CHIP_ERROR>>
+CHIP_ERROR INSTANCE_TEMPLATE_CLASS::SetOverflow(OverflowEnum aOverflow)
 {
-	VerifyOrReturnError(EnsureKnownEnumValue(aOverflow) != OverflowEnum::kUnknownEnumValue, CHIP_ERROR_INVALID_ARGUMENT);
+ 	VerifyOrReturnError(EnsureKnownEnumValue(aOverflow) != OverflowEnum::kUnknownEnumValue, CHIP_ERROR_INVALID_ARGUMENT);
 	// Check to see if a change has ocurred
 	VerifyOrReturnError(this->mOverflow != aOverflow, CHIP_NO_ERROR);
 	this->mOverflow = aOverflow;
@@ -369,8 +361,9 @@ CHIP_ERROR Instance::SetOverflow(OverflowEnum aOverflow)
 	return CHIP_NO_ERROR;
 }
 
-template <bool Enabled = FeatureModulationEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-CHIP_ERROR Instance::SetModulationType(ModulationTypeEnum aModulationType)
+INSTANCE_TEMPLATE_PARAMS
+template <bool Enabled, typename std::enable_if_t<Enabled, CHIP_ERROR>>
+CHIP_ERROR INSTANCE_TEMPLATE_CLASS::SetModulationType(ModulationTypeEnum aModulationType)
 {
 	VerifyOrReturnError(EnsureKnownEnumValue(aModulationType) != ModulationTypeEnum::kUnknownEnumValue, CHIP_ERROR_INVALID_ARGUMENT);
 	// Check to see if a change has ocurred
@@ -378,12 +371,12 @@ CHIP_ERROR Instance::SetModulationType(ModulationTypeEnum aModulationType)
 	this->mModulationType = aModulationType;
 	MatterReportingAttributeChangeCallback(mEndpointId, mClusterId, Attributes::ModulationType::Id);
 
-	return CHIP_NO_ERROR;
-	
+	return CHIP_NO_ERROR;	
 }
 
-template <bool Enabled = FeatureLatchingEnabled && !FeaturePositioningEnabled, typename = std::enable_if_t<Enabled, CHIP_ERROR>>
-CHIP_ERROR Instance::SetLatchingAxis(LatchingAxisEnum aLatchingAxis)
+INSTANCE_TEMPLATE_PARAMS
+template <bool Enabled, typename std::enable_if_t<Enabled, CHIP_ERROR>>
+CHIP_ERROR INSTANCE_TEMPLATE_CLASS::SetLatchingAxis(LatchingAxisEnum aLatchingAxis)
 {
 	VerifyOrReturnError(EnsureKnownEnumValue(aLatchingAxis) != LatchingAxisEnum::kUnknownEnumValue, CHIP_ERROR_INVALID_ARGUMENT);
 	// Check to see if a change has ocurred
@@ -394,7 +387,8 @@ CHIP_ERROR Instance::SetLatchingAxis(LatchingAxisEnum aLatchingAxis)
 	return CHIP_NO_ERROR;
 }
 
-void Instance::InvokeCommand(HandlerContext & handlerContext)
+INSTANCE_TEMPLATE_PARAMS
+void INSTANCE_TEMPLATE_CLASS::InvokeCommand(HandlerContext & handlerContext)
 {
 	ChipLogDetail(Zcl, "%s ClDim: InvokeCommand", GetClusterName());
 	if (handlerContext.mCommandHandled || !IsValidAliasCluster(handlerContext.mRequestPath.mClusterId))
@@ -419,10 +413,9 @@ void Instance::InvokeCommand(HandlerContext & handlerContext)
 				// Payload ready to be used
 				HandleStepCommand(handlerContext, requestPayload);
 			break;
-
 		case Commands::SetTarget::Id:
-				ChipLogDetail(Zcl, "%s ClDim::Cmd::Latch()", GetClusterName());
-				Commands::Latch::DecodableType requestPayload;
+				ChipLogDetail(Zcl, "%s ClDim::Cmd::SetTarget()", GetClusterName());
+				// ToDo:   Commands::SetTarget::DecodableType requestPayload;
 				handlerContext.SetCommandHandled();
 
 				if (DataModel::Decode(handlerContext.mPayload, requestPayload) != CHIP_NO_ERROR)
@@ -434,7 +427,6 @@ void Instance::InvokeCommand(HandlerContext & handlerContext)
 				// Payload ready to be used
 				HandleSetTargetCommand(handlerContext, requestPayload);
 			break;
-
 		default:
 			ChipLogError(Zcl, "%s ClDim: InvokeCommand unknown", GetClusterName());
 			handlerContext.mCommandHandler.AddStatus(handlerContext.mRequestPath, Protocols::InteractionModel::Status::UnsupportedCommand);
@@ -442,12 +434,13 @@ void Instance::InvokeCommand(HandlerContext & handlerContext)
 			break;
 	}
 
-	/* NOTE: TODO better error handing this is for demo purpose */
+	// NOTE: TODO better error handing this is for demo purpose 
 	handlerContext.mCommandHandler.AddStatus(handlerContext.mRequestPath, Protocols::InteractionModel::Status::Success);	
 }
 
 // AttributeAccessInterface
-CHIP_ERROR Instance::Read(const ConcreteReadAttributePath & aPath, AttributeValueEncoder & aEncoder)
+INSTANCE_TEMPLATE_PARAMS
+CHIP_ERROR INSTANCE_TEMPLATE_CLASS::Read(const ConcreteReadAttributePath & aPath, AttributeValueEncoder & aEncoder)
 {
 	bool isAttributeSupported = false;
 	switch (aPath.mAttributeId)
@@ -457,7 +450,7 @@ CHIP_ERROR Instance::Read(const ConcreteReadAttributePath & aPath, AttributeValu
 		// ToDo: To be Completed	
 		break;
 
-	/* Positioning feature Attributes */
+	// Positioning feature Attributes
 	case Attributes::Current::Id:
 		ChipLogDetail(Zcl, "%s ClDim::Read::Current", GetClusterName());
 		if constexpr (FeaturePositioningEnabled)
@@ -494,7 +487,7 @@ CHIP_ERROR Instance::Read(const ConcreteReadAttributePath & aPath, AttributeValu
 		}
 		break;
 
-	/* Unit feature Attributes */
+	// Unit feature Attributes
 	case Attributes::Unit::Id:
 		ChipLogDetail(Zcl, "%s ClDim::Read::Unit", GetClusterName());
 		if constexpr (FeatureUnitEnabled)
@@ -513,7 +506,7 @@ CHIP_ERROR Instance::Read(const ConcreteReadAttributePath & aPath, AttributeValu
 		}
 		break;
 
-	/* Limitation feature Attributes */
+	// Limitation feature Attributes
 	case Attributes::LimitRange::Id:
 		ChipLogDetail(Zcl, "%s ClDim::Read::LimitRange", GetClusterName());
 		if constexpr (FeatureLimitationEnabled)
@@ -570,7 +563,7 @@ CHIP_ERROR Instance::Read(const ConcreteReadAttributePath & aPath, AttributeValu
 
 	case Attributes::FeatureMap::Id:
 		ChipLogDetail(Zcl, "%s ClDim::Read::FeatureMap", GetClusterName());
-		LogFeatureMap(mFeatureMap);
+		// ToDo: LogFeatureMap(mFeatureMap);
 		ReturnErrorOnFailure(aEncoder.Encode(mFeatureMap));
 		isAttributeSupported = true;
 		break;
@@ -579,13 +572,14 @@ CHIP_ERROR Instance::Read(const ConcreteReadAttributePath & aPath, AttributeValu
 	return isAttributeSupported ? CHIP_NO_ERROR : CHIP_IM_GLOBAL_STATUS(UnsupportedAttribute);
 }
 
-void Instance::HandleStepCommand(HandlerContext & ctx, const Commands::Step::DecodableType & req)
+INSTANCE_TEMPLATE_PARAMS
+void INSTANCE_TEMPLATE_CLASS::HandleStepCommand(HandlerContext & ctx, const Commands::Step::DecodableType & req)
 {
 	Status status = Status::Success;
 
 	auto & direction     = req.direction;
-	auto & numberOfSteps = reg.numberOfSteps;
-	auto & speed         = reg.speed;
+	auto & numberOfSteps = req.numberOfSteps;
+	auto & speed         = req.speed;
 
 	ChipLogDetail(Zcl, "%s ClDim: HandleStepCommand", GetClusterName());
 	ChipLogDetail(Zcl, "%s ClDim: dir=%u #Step=%u cId=0x%04X/0x%04X", GetClusterName(), to_underlying(req.direction), req.numberOfSteps, req.GetClusterId(), mClusterId);
@@ -601,62 +595,66 @@ void Instance::HandleStepCommand(HandlerContext & ctx, const Commands::Step::Dec
 		ctx.mCommandHandler.AddStatus(ctx.mRequestPath, Status::ConstraintError);
 		return;
 	}
-	if(speed >= Globals::ThreeLevelAutoEnum::kUnknownEnumValue)
+	if(speed.HasValue())
 	{
-		ctx.mCommandHandler.AddStatus(ctx.mRequestPath, Status::ConstraintError);
-		return;
-	}
-
+		if(speed.Value() >= Globals::ThreeLevelAutoEnum::kUnknownEnumValue)
+		{
+			ctx.mCommandHandler.AddStatus(ctx.mRequestPath, Status::ConstraintError);
+			return;
+		}
+	}	
+	
     // Delegate forwarding
-	status = mDelegate.SetStepCallback(direction, numberOfSteps, speed);
+	status = mDelegate.SetStepCallback(static_cast<uint8_t>(direction), numberOfSteps, static_cast<uint8_t>(speed.Value())); // ToDo type cast
 
 	ctx.mCommandHandler.AddStatus(ctx.mRequestPath, status);
 }
 
-void Instance::HandleSetTargetCommand(HandlerContext & ctx, const Commands::SetTarget::DecodableType & req)
+INSTANCE_TEMPLATE_PARAMS
+void INSTANCE_TEMPLATE_CLASS::HandleSetTargetCommand(HandlerContext & ctx, const Commands::SetTarget::DecodableType & req)
 {
 	 Status status = Status::Success;
 
 	 auto & position = req.position;
-	 auto & tagLatch = reg.tagLatch;
-	 auto & speed    = reg.speed;
+	 auto & tagLatch = req.tagLatch;
+	 auto & speed    = req.speed;
 
 	ChipLogDetail(Zcl, "%s ClDim: HandleLatchCommand", GetClusterName());
 
 
-	// Error handling
-	if constexpr (FeaturePositioningEnabled)
+	// Error handling	
+	if(position.HasValue())
 	{
-		if(position > kMaxPercent100ths)
+		if(position.Value() > kMaxPercent100ths)
 		{
 			ctx.mCommandHandler.AddStatus(ctx.mRequestPath, Status::ConstraintError);
 			return;
 		}
 	}
-	if constexpr (FeatureLatchingEnabled)
+	if(tagLatch.HasValue())
 	{
-		if(tagLatch >= TagLatchEnum::kUnknownEnumValue)
+		if(tagLatch.Value() >= TagLatchEnum::kUnknownEnumValue)
 		{
 			ctx.mCommandHandler.AddStatus(ctx.mRequestPath, Status::ConstraintError);
 			return;
 		}
 	}
-	if constexpr (FeatureSpeedEnabled)
+	if(speed.HasValue())
 	{
-		if(speed >= Globals::ThreeLevelAutoEnum::kUnknownEnumValue)
+		if(speed.Value() >= Globals::ThreeLevelAutoEnum::kUnknownEnumValue)
 		{
 			ctx.mCommandHandler.AddStatus(ctx.mRequestPath, Status::ConstraintError);
 			return;
 		}
-	}
+	}	
 
 	// Delegate forwarding
-	status = mDelegate.SetSetTargetCallback(position, tagLatch, speed);
-	
+	status = mDelegate.SetSetTargetCallback(static_cast<uint16_t>(position.Value()), static_cast<uint8_t>(tagLatch.Value()), static_cast<uint8_t>(speed.Value())); // ToDo type cast	
 	ctx.mCommandHandler.AddStatus(ctx.mRequestPath, status);
 }
 
-uint32_t Instance::GenerateFeatureMap() const
+INSTANCE_TEMPLATE_PARAMS
+uint32_t INSTANCE_TEMPLATE_CLASS::GenerateFeatureMap() const
 {
 	//
 	BitMask<Feature, uint32_t> featureMap(0);
@@ -668,7 +666,7 @@ uint32_t Instance::GenerateFeatureMap() const
 
 	if constexpr (FeatureLatchingEnabled)
 	{
-		featureMap.Set(Feature::kLatching);
+		featureMap.Set(Feature::kMotionLatching);
 	}
 
 	if constexpr (FeatureRotationEnabled)
@@ -705,7 +703,8 @@ uint32_t Instance::GenerateFeatureMap() const
 }
 
 // For test purpose only
-const char * Instance::GetClusterName() const
+INSTANCE_TEMPLATE_PARAMS
+const char * INSTANCE_TEMPLATE_CLASS::GetClusterName() const
 {
 	for (Info AliasedCluster : AliasedClusters)
 	{
@@ -717,6 +716,9 @@ const char * Instance::GetClusterName() const
 	ChipLogDetail(Zcl, "INVALID CLUSTER");
 	return nullptr;
 };
+
+#undef INSTANCE_TEMPLATE_PARAMS
+#undef INSTANCE_TEMPLATE_CLASS
 
 } // namespace ClosureDimension
 } // namespace Clusters
