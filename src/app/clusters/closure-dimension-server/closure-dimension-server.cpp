@@ -400,7 +400,7 @@ void INSTANCE_TEMPLATE_CLASS::InvokeCommand(HandlerContext & handlerContext)
 
 	switch (handlerContext.mRequestPath.mCommandId)
 	{
-		case Commands::Step::Id:
+		case Commands::Step::Id: {
 				ChipLogDetail(Zcl, "%s ClDim::Cmd::Step()", GetClusterName());
 				Commands::Step::DecodableType requestPayload;
 				handlerContext.SetCommandHandled();
@@ -412,10 +412,11 @@ void INSTANCE_TEMPLATE_CLASS::InvokeCommand(HandlerContext & handlerContext)
 				}
 				// Payload ready to be used
 				HandleStepCommand(handlerContext, requestPayload);
+		    }	
 			break;
-		case Commands::SetTarget::Id:
+		case Commands::SetTarget::Id: {
 				ChipLogDetail(Zcl, "%s ClDim::Cmd::SetTarget()", GetClusterName());
-				// ToDo:   Commands::SetTarget::DecodableType requestPayload;
+				Commands::SetTarget::DecodableType requestPayload;
 				handlerContext.SetCommandHandled();
 
 				if (DataModel::Decode(handlerContext.mPayload, requestPayload) != CHIP_NO_ERROR)
@@ -426,6 +427,7 @@ void INSTANCE_TEMPLATE_CLASS::InvokeCommand(HandlerContext & handlerContext)
 				
 				// Payload ready to be used
 				HandleSetTargetCommand(handlerContext, requestPayload);
+		    }
 			break;
 		default:
 			ChipLogError(Zcl, "%s ClDim: InvokeCommand unknown", GetClusterName());
@@ -605,7 +607,7 @@ void INSTANCE_TEMPLATE_CLASS::HandleStepCommand(HandlerContext & ctx, const Comm
 	}	
 	
     // Delegate forwarding
-	status = mDelegate.SetStepCallback(static_cast<uint8_t>(direction), numberOfSteps, static_cast<uint8_t>(speed.Value())); // ToDo type cast
+	status = mDelegate.SetStepCallback(direction, numberOfSteps, speed.Value()); // ToDo type cast
 
 	ctx.mCommandHandler.AddStatus(ctx.mRequestPath, status);
 }
@@ -649,7 +651,7 @@ void INSTANCE_TEMPLATE_CLASS::HandleSetTargetCommand(HandlerContext & ctx, const
 	}	
 
 	// Delegate forwarding
-	status = mDelegate.SetSetTargetCallback(static_cast<uint16_t>(position.Value()), static_cast<uint8_t>(tagLatch.Value()), static_cast<uint8_t>(speed.Value())); // ToDo type cast	
+	status = mDelegate.SetSetTargetCallback(position.Value(), tagLatch.Value(), speed.Value());	
 	ctx.mCommandHandler.AddStatus(ctx.mRequestPath, status);
 }
 

@@ -342,14 +342,14 @@ public:
       * It should report Status::Success if successful and may
       * return other Status codes if it fails
      */
-	virtual Protocols::InteractionModel::Status SetStepCallback(const uint8_t direction, const uint16_t numberOfSteps, const uint8_t speed) = 0;
+	virtual Protocols::InteractionModel::Status SetStepCallback(const StepDirectionEnum direction, const uint16_t numberOfSteps, const Globals::ThreeLevelAutoEnum speed) = 0;
 
      /**
      * Handle Command Callback in application: SetTarget
       * It should report Status::Success if successful and may
       * return other Status codes if it fails
      */
-	virtual Protocols::InteractionModel::Status SetSetTargetCallback(uint16_t positioning, uint8_t tagLatch, uint8_t speed) = 0;
+	virtual Protocols::InteractionModel::Status SetSetTargetCallback(const Percent100ths positioning, const TagLatchEnum tagLatch, const Globals::ThreeLevelAutoEnum speed) = 0;
 	
 protected:
     //EndpointId mEndpointId = 0;
