@@ -3,7 +3,7 @@
 #include "closures-operational-state-delegate.h"
 #include <app/clusters/mode-base-server/mode-base-server.h>
 #include <app/clusters/operational-state-server/operational-state-server.h>
-//#include <app/clusters/closure-dimension-server/closure-dimension-server.h>
+#include <app/clusters/closure-dimension-server/closure-dimension-server.h>
 #include "../../linux/MotionSimulator.h"
 
 #include <string>
@@ -15,9 +15,33 @@
 typedef void (example::Ui::ImguiUi::*AddWindow)(std::unique_ptr<example::Ui::Window> window);
 #endif
 
+using chip::Protocols::InteractionModel::Status;
+
 namespace chip {
 namespace app {
 namespace Clusters {
+
+
+class DimensionDelegate : public ClosureDimension::Delegate
+{
+public:
+    DimensionDelegate() : ClosureDimension::Delegate() {ChipLogDetail(NotSpecified, "Delegate INIT");}
+    ~DimensionDelegate() = default;
+
+    Status SetStepCallback(ClosureDimension::StepDirectionEnum direction, uint16_t numberOfSteps, Globals::ThreeLevelAutoEnum speed) override
+    {
+        ChipLogDetail(NotSpecified, "SetStepCallback");
+        return Status::Success;
+
+    };
+
+    Status SetSetTargetCallback(Percent100ths positioning, ClosureDimension::TagLatchEnum tagLatch, Globals::ThreeLevelAutoEnum speed) override
+    {
+        ChipLogDetail(NotSpecified, "SetSetTargetCallback");
+        return Status::Success;
+    }
+
+};
 
 class ClosuresDevice : public OperationalState::Observer 
 {
@@ -70,6 +94,10 @@ private:
     void AddImGuiClosureOpStateInstance(chip::EndpointId aEp, const char * aName, uint32_t aFeature);
 #endif
 
+    // Add gRotationInstance and gDimensionDelegate as a class member
+    DimensionDelegate *gDimensionDelegate = nullptr;
+    ClosureDimension::Instance<true, false, false, true, true, true, false, false> gRotationInstance;
+
 public:
     /**
      * This class is responsible for initialising all the Closures clusters and manging the interactions between them as required by
@@ -77,32 +105,10 @@ public:
      * @param aClosuresClustersEndpoint The endpoint ID where all the Closures clusters exist.
      */
     using Feature = ClosureOperationalState::Feature;
-    explicit ClosuresDevice(EndpointId aClosuresClustersEndpoint) :
-        mOperationalStateInstance(&mOperationalStateDelegate, aClosuresClustersEndpoint,
-              BitMask<Feature>(
-                Feature::kPositioning,
-                Feature::kIntermediatePositioning,
-                Feature::kSpeed,
-                Feature::kVentilation,
-                Feature::kPedestrian,
-                Feature::kManuallyOperable,
-                Feature::kCalibration,
-                Feature::kFallback))
-    {
+    
+    explicit ClosuresDevice(EndpointId aClosuresClustersEndpoint);
 
-        // Initialize mOverallState with default values
-        mOverallState = mOperationalStateInstance.GetCurrentOverallState();
-
-        // set callback functions
-        mOperationalStateDelegate.SetPauseCallback(&ClosuresDevice::HandleOpStatePauseCallback, this);
-        mOperationalStateDelegate.SetResumeCallback(&ClosuresDevice::HandleOpStateResumeCallback, this);
-        mOperationalStateDelegate.SetStopCallback(&ClosuresDevice::HandleOpStateStopCallback, this);
-        mOperationalStateDelegate.SetMoveToCallback(&ClosuresDevice::HandleOpStateMoveToCallback, this);
-        mOperationalStateDelegate.SetCalibrateCallback(&ClosuresDevice::HandleOpStateCalibrateCallback, this);
-        mOperationalStateDelegate.SetConfigureFallbackCallback(&ClosuresDevice::HandleOpStateConfigureFallbackCallback, this);
-        mOperationalStateDelegate.SetCancelFallbackCallback(&ClosuresDevice::HandleOpStateCancelFallbackCallback, this);
-        mOperationalStateDelegate.SetCheckReadinessCallback(&ClosuresDevice::CheckReadiness, this);
-    }
+    ~ClosuresDevice();
 
     // Add a public method to allow adding observers
     void AddOperationalStateObserver(OperationalState::Observer * observer);

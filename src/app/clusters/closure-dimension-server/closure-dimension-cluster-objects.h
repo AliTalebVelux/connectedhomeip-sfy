@@ -48,6 +48,7 @@ using ClosureUnitEnum = Closure1stDimension::ClosureUnitEnum; //--> Clusters::de
 
 using LatchingEnum = Closure1stDimension::LatchingEnum;
 using TagLatchEnum = Closure1stDimension::TagLatchEnum;
+using StepDirectionEnum = Closure1stDimension::StepDirectionEnum;
 
 using TranslationDirectionEnum = Closure1stDimension::TranslationDirectionEnum;
 using RotationAxisEnum = Closure1stDimension::RotationAxisEnum;

@@ -28,11 +28,46 @@ static constexpr char strLogN[] = CL_RED "N" CL_CLEAR;
 // -> <bool FeatureLatchingEnabled, bool FeatureSpeedEnabled, bool FeatureLimitationEnabled>
 
 using namespace chip::app::Clusters::ClosureDimension;
-static Instance gLatchOnlyInstance    = ClosureLatchOnlyInstance(                       chip::EndpointId(1), Closure1stDimension::Id, LatchingAxisEnum::kVerticalTranslation);
-static Instance gModulationInstance   = ClosureModulationInstance<false, false, false> (chip::EndpointId(1), Closure2ndDimension::Id, ModulationTypeEnum::kStripsAlignment);
-static Instance gRotationInstance     = ClosureRotationInstance<true, false, false>    (chip::EndpointId(1), Closure3rdDimension::Id, RotationAxisEnum::kLeft, OverflowEnum::kNoOverflow);
-static Instance gTranslationInstance  = ClosureTranslationInstance<false, false, false>(chip::EndpointId(1), Closure4thDimension::Id, TranslationDirectionEnum::kHorizontalSymmetry);
-static Instance gAllFeatureTrInstance = ClosureTranslationInstance<true, true, true>   (chip::EndpointId(1), Closure5thDimension::Id, TranslationDirectionEnum::kDepthMask);
+//static Instance gLatchOnlyInstance    = ClosureLatchOnlyInstance(                       chip::EndpointId(1), Closure1stDimension::Id, LatchingAxisEnum::kVerticalTranslation);
+//static Instance gModulationInstance   = ClosureModulationInstance<false, false, false> (chip::EndpointId(1), Closure2ndDimension::Id, ModulationTypeEnum::kStripsAlignment);
+//static Instance gRotationInstance     = ClosureRotationInstance<true, true, false>    (*gDimensionDelegate, chip::EndpointId(1), Closure3rdDimension::Id, RotationAxisEnum::kLeft, OverflowEnum::kNoOverflow);
+//static Instance gTranslationInstance  = ClosureTranslationInstance<false, false, false>(chip::EndpointId(1), Closure4thDimension::Id, TranslationDirectionEnum::kHorizontalSymmetry);
+//static Instance gAllFeatureTrInstance = ClosureTranslationInstance<true, true, true>   (chip::EndpointId(1), Closure5thDimension::Id, TranslationDirectionEnum::kDepthMask);
+
+
+ClosuresDevice::ClosuresDevice(EndpointId aClosuresClustersEndpoint) :
+    mOperationalStateInstance(&mOperationalStateDelegate, aClosuresClustersEndpoint,
+            BitMask<Feature>(
+            Feature::kPositioning,
+            Feature::kIntermediatePositioning,
+            Feature::kSpeed,
+            Feature::kVentilation,
+            Feature::kPedestrian,
+            Feature::kManuallyOperable,
+            Feature::kCalibration,
+            Feature::kFallback)),
+            gDimensionDelegate(new DimensionDelegate()),
+            gRotationInstance(*gDimensionDelegate, chip::EndpointId(1), Closure1stDimension::Id, ClosureDimension::RotationAxisEnum::kRightBarrier, ClosureDimension::OverflowEnum::kRightOutside, 
+            ClosureDimension::ModulationTypeEnum::kVentilation, ClosureDimension::LatchingAxisEnum::kDepthRotation, ClosureDimension::TranslationDirectionEnum::kRightward)
+{
+    // Initialize mOverallState with default values
+    mOverallState = mOperationalStateInstance.GetCurrentOverallState();
+
+    // set callback functions
+    mOperationalStateDelegate.SetPauseCallback(&ClosuresDevice::HandleOpStatePauseCallback, this);
+    mOperationalStateDelegate.SetResumeCallback(&ClosuresDevice::HandleOpStateResumeCallback, this);
+    mOperationalStateDelegate.SetStopCallback(&ClosuresDevice::HandleOpStateStopCallback, this);
+    mOperationalStateDelegate.SetMoveToCallback(&ClosuresDevice::HandleOpStateMoveToCallback, this);
+    mOperationalStateDelegate.SetCalibrateCallback(&ClosuresDevice::HandleOpStateCalibrateCallback, this);
+    mOperationalStateDelegate.SetConfigureFallbackCallback(&ClosuresDevice::HandleOpStateConfigureFallbackCallback, this);
+    mOperationalStateDelegate.SetCancelFallbackCallback(&ClosuresDevice::HandleOpStateCancelFallbackCallback, this);
+    mOperationalStateDelegate.SetCheckReadinessCallback(&ClosuresDevice::CheckReadiness, this);
+}
+
+ClosuresDevice::~ClosuresDevice()
+{
+    delete gDimensionDelegate;
+}
 
 void MatterClosure1stDimensionPluginServerInitCallback() {
     ChipLogDetail(NotSpecified, "MatterClosure1stDimensionPluginServerInitCallback begin");
@@ -69,22 +104,26 @@ void ClosuresDevice::ClosureDimensionsSetup(chip::EndpointId endpoint)
 {
     ChipLogDetail(NotSpecified, "Dimensions setup start");
 
+    gRotationInstance.Init();
+    gRotationInstance.SetRotationAxis(RotationAxisEnum::kCenteredHorizontal);
+    gRotationInstance.SetOverflow(OverflowEnum::kLeftInside);
+
     // Initialize all Clusters Dimensions
 
     /* Latching Only */
-    gLatchOnlyInstance.Init();
+/*     gLatchOnlyInstance.Init();
     gLatchOnlyInstance.SetLatchingAxis(LatchingAxisEnum::kDepthTranslation);
     chip::Optional<LatchingEnum> aLatching;
     gLatchOnlyInstance.SetTargetLatching(aLatching);
     aLatching.SetValue(LatchingEnum::kLatchedButNotSecured);
-    gLatchOnlyInstance.SetCurrentLatching(aLatching);
+    gLatchOnlyInstance.SetCurrentLatching(aLatching); */
 
-#if defined(CHIP_IMGUI_ENABLED) && CHIP_IMGUI_ENABLED
+/* #if defined(CHIP_IMGUI_ENABLED) && CHIP_IMGUI_ENABLED
     AddImGuiClosureDimensionInstance(gLatchOnlyInstance.GetEndpoint(), gLatchOnlyInstance.GetClusterName(), gLatchOnlyInstance.GetFeatureMap());
-#endif
+#endif */
 
     /* Modulation */
-    gModulationInstance.Init();
+/*     gModulationInstance.Init();
     chip::Optional<chip::Percent100ths> aPositioning;
     chip::Optional<Globals::ThreeLevelAutoEnum> aSpeed;
     aPositioning.SetValue(2);
@@ -93,31 +132,31 @@ void ClosuresDevice::ClosureDimensionsSetup(chip::EndpointId endpoint)
     gModulationInstance.SetResolutionAndStepValue(5000, 3);
     gModulationInstance.SetTargetPositioning(aPositioning, aSpeed);
     gModulationInstance.SetCurrentPositioning(aPositioning, aSpeed);
-    gModulationInstance.SetModulationType(ModulationTypeEnum::kSlatsOpenwork);
+    gModulationInstance.SetModulationType(ModulationTypeEnum::kSlatsOpenwork); */
 
-#if defined(CHIP_IMGUI_ENABLED) && CHIP_IMGUI_ENABLED
+/* #if defined(CHIP_IMGUI_ENABLED) && CHIP_IMGUI_ENABLED
     AddImGuiClosureDimensionInstance(gModulationInstance.GetEndpoint(), gModulationInstance.GetClusterName(), gModulationInstance.GetFeatureMap());
-#endif
+#endif */
 
     /* Translation */
-    gTranslationInstance.Init();
-    gTranslationInstance.SetTranslationDirection(TranslationDirectionEnum::kCeilingCenteredSymmetry);
+/*     gTranslationInstance.Init();
+    gTranslationInstance.SetTranslationDirection(TranslationDirectionEnum::kCeilingCenteredSymmetry); */
 
-#if defined(CHIP_IMGUI_ENABLED) && CHIP_IMGUI_ENABLED
+/* #if defined(CHIP_IMGUI_ENABLED) && CHIP_IMGUI_ENABLED
     AddImGuiClosureDimensionInstance(gTranslationInstance.GetEndpoint(), gTranslationInstance.GetClusterName(), gTranslationInstance.GetFeatureMap());
-#endif
+#endif */
 
     /* Rotation */
-    gRotationInstance.Init();
+/*     gRotationInstance.Init();
     gRotationInstance.SetRotationAxis(RotationAxisEnum::kCenteredHorizontal);
-    gRotationInstance.SetOverFlow(OverflowEnum::kLeftInside);
+    gRotationInstance.SetOverFlow(OverflowEnum::kLeftInside); */
 
-#if defined(CHIP_IMGUI_ENABLED) && CHIP_IMGUI_ENABLED
+/* #if defined(CHIP_IMGUI_ENABLED) && CHIP_IMGUI_ENABLED
     AddImGuiClosureDimensionInstance(gRotationInstance.GetEndpoint(), gRotationInstance.GetClusterName(), gRotationInstance.GetFeatureMap());
-#endif
+#endif */
 
     /* All Features Translation */
-    gAllFeatureTrInstance.Init();
+/*     gAllFeatureTrInstance.Init();
     chip::Optional<chip::Percent100ths> aMin;
     chip::Optional<chip::Percent100ths> aMax;
     aMax.SetValue(8000);
@@ -125,7 +164,7 @@ void ClosuresDevice::ClosureDimensionsSetup(chip::EndpointId endpoint)
 
 #if defined(CHIP_IMGUI_ENABLED) && CHIP_IMGUI_ENABLED
     AddImGuiClosureDimensionInstance(gAllFeatureTrInstance.GetEndpoint(), gAllFeatureTrInstance.GetClusterName(), gAllFeatureTrInstance.GetFeatureMap());
-#endif
+#endif */
 
     ChipLogDetail(NotSpecified, "Dimensions setup done");
 }
@@ -562,7 +601,7 @@ void ClosuresDevice::ClosuresMoveToStimuli(std::optional<uint8_t> tag, std::opti
 
 
 
-using toto = chip::app::Clusters::Closure5thDimension::Commands::UnLatch::DecodableType;
+//using toto = chip::app::Clusters::Closure5thDimension::Commands::UnLatch::DecodableType;
 
 
 void ClosuresDevice::ClosuresCalibrateStimuli()
