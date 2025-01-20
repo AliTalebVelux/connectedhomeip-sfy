@@ -36,6 +36,12 @@ namespace chip {
 namespace app {
 namespace Clusters {
 namespace ClosureDimension {
+
+ /* ******** For test purpose only ******** */
+#define CL_CLEAR  "\x1b[0m"
+#define CL_RED    "\u001b[31m"
+#define CL_GREEN  "\u001b[32m"
+#define CL_YELLOW "\u001b[33m"
 	
 namespace Detail {
 
@@ -144,20 +150,6 @@ protected:
 };
 
 } // namespace Detail
-
-
-template <class U> // Temporary for debug reason 
-void ChipLogOptionalValue(const chip::Optional<U> & item, const char * message, const char * name) //const Optional<U> & other)
-{
-    if (item.HasValue())
-    {
-        ChipLogDetail(Zcl, "%s %s 0x%02u", message, name, static_cast<uint16_t>(item.Value()));
-    }
-    else
-    {
-        //ChipLogDetail(Zcl, "%s %s" CL_YELLOW "NotPresent" CL_CLEAR, message, name);
-    }
-}
 
 /**
  * Defines methods for implementing application-specific logic for the closure dimension aliased cluster.
@@ -334,12 +326,12 @@ private:
 	void InvokeCommand(HandlerContext & handlerContext)
     {
         ChipLogDetail(Zcl, "%s ClDim: InvokeCommand", GetClusterName());
-    /*     if (handlerContext.mCommandHandled || !IsValidAliasCluster(handlerContext.mRequestPath.mClusterId))
+        if (handlerContext.mCommandHandled || !IsValidAliasCluster(handlerContext.mRequestPath.mClusterId))
         {
             // TODO check separately the mCommandHandled
             handlerContext.mCommandHandler.AddStatus(handlerContext.mRequestPath, Protocols::InteractionModel::Status::UnsupportedCluster);
             return;
-        } */
+        }
 
         switch (handlerContext.mRequestPath.mCommandId)
         {
@@ -397,7 +389,6 @@ private:
             // ToDo: To be Completed	
             break;
 
-        // Positioning feature Attributes
         case Attributes::Current::Id:
             ChipLogDetail(Zcl, "%s ClDim::Read::Current", GetClusterName());
             if constexpr (FeaturePositioningEnabled)
@@ -434,7 +425,6 @@ private:
             }
             break;
 
-        // Unit feature Attributes
         case Attributes::Unit::Id:
             ChipLogDetail(Zcl, "%s ClDim::Read::Unit", GetClusterName());
             if constexpr (FeatureUnitEnabled)
@@ -453,7 +443,6 @@ private:
             }
             break;
 
-        // Limitation feature Attributes
         case Attributes::LimitRange::Id:
             ChipLogDetail(Zcl, "%s ClDim::Read::LimitRange", GetClusterName());
             if constexpr (FeatureLimitationEnabled)
@@ -510,7 +499,7 @@ private:
 
         case Attributes::FeatureMap::Id:
             ChipLogDetail(Zcl, "%s ClDim::Read::FeatureMap", GetClusterName());
-            //LogFeatureMap(mFeatureMap);
+            LogFeatureMap(mFeatureMap);
             ReturnErrorOnFailure(aEncoder.Encode(mFeatureMap));
             isAttributeSupported = true;
             break;
@@ -523,7 +512,19 @@ private:
      * This checks if the clusters instance is a valid ClosureDimension cluster based on the AliasedClusters list.
      * @return true if the cluster is a valid ClosureDimension cluster.
      */
-	bool IsValidAliasCluster(ClusterId cId) const;
+	bool IsValidAliasCluster(ClusterId cId) const
+        {
+        for (Info AliasedCluster : AliasedClusters)
+        {
+            if (cId == AliasedCluster.cId)
+            {
+                return true;
+            }
+        }
+        ChipLogDetail(Zcl, "INVALID CLUSTER");
+        return false;
+    };
+
 	inline bool IsValidAliasCluster() const { return IsValidAliasCluster(mClusterId); }
 
     uint32_t GenerateFeatureMap() const
@@ -616,7 +617,7 @@ public:
         }
 
         ChipLogDetail(Zcl, "%s ClDim Instance.Constructor() w Features: ID=0x%02lX EP=%u", GetClusterName(), long(mClusterId), mEndpointId);
-        //LogFeatureMap(GenerateFeatureMap());
+        LogFeatureMap(GenerateFeatureMap());
  
     }
 
@@ -627,9 +628,18 @@ public:
         AttributeAccessInterfaceRegistry::Instance().Unregister(this);
     };
 
-    /* ******** For test purpose ******** */
+    /* ******** For test purpose - start ******** */
     uint32_t GetFeatureMap() { return mFeatureMap; }
     EndpointId GetEndpoint() { return mEndpointId; }
+    static constexpr char strLogY[] = CL_GREEN "Y" CL_CLEAR;
+    static constexpr char strLogN[] = CL_RED "N" CL_CLEAR;
+
+    const char * StrYN(bool isTrue)
+    {
+        return isTrue ? strLogY : strLogN;
+    }
+
+    #define IsYN(TEST)  StrYN(TEST)
 
     const char * GetClusterName() const
     {
@@ -643,7 +653,14 @@ public:
         ChipLogDetail(Zcl, "INVALID CLUSTER");
         return nullptr;
     };
-    /* void LogFeatureMap(const uint32_t & featureMap)
+    
+    inline void LogIsFeatureSupported(const uint32_t & featureMap, Feature aFeature)
+    {
+        const BitMask<Feature> value = featureMap;
+        ChipLogDetail(NotSpecified, " %-20s [%s]", GetFeatureName(aFeature), IsYN(value.Has(aFeature)));
+    }
+
+    void LogFeatureMap(const uint32_t & featureMap)
     {
         const BitMask<Feature> value = featureMap;
 
@@ -657,7 +674,8 @@ public:
         LogIsFeatureSupported(featureMap, Feature::kTranslation);
         LogIsFeatureSupported(featureMap, Feature::kRotation);
         LogIsFeatureSupported(featureMap, Feature::kModulation);
-    }; */
+    };
+    /* ******** For test purpose - end ******** */
 	
 	/**
      * Initialise the closure dimension server instance.
@@ -683,7 +701,7 @@ public:
         static_assert(!FeatureTranslationEnabled ||  FeatureRotationEnabled   ||  FeatureModulationEnabled || FeatureTranslationEnabled, "Features: at least one among MD/RO/TR");
         static_assert(!FeatureRotationEnabled    || !FeatureModulationEnabled || !FeatureTranslationEnabled, "Features: MD vs TR vs RO, exclusivity unmet");
 
-        //VerifyOrReturnError(IsValidAliasCluster(), CHIP_ERROR_INCORRECT_STATE);
+        VerifyOrReturnError(IsValidAliasCluster(), CHIP_ERROR_INCORRECT_STATE);
 
         // Check if the cluster has been selected in zap
         VerifyOrReturnError(emberAfContainsServer(mEndpointId, mClusterId), CHIP_ERROR_INCORRECT_STATE);
@@ -693,7 +711,7 @@ public:
         ReturnErrorOnFailure(CommandHandlerInterfaceRegistry::Instance().RegisterCommandHandler(this));
 
         mFeatureMap = GenerateFeatureMap();
-        //LogFeatureMap(mFeatureMap);
+        LogFeatureMap(mFeatureMap);
 
         ChipLogDetail(NotSpecified, "%s ClDim Registered as Ep[%u] Id=0x%04X", GetClusterName(), mEndpointId, mClusterId);
 
@@ -947,7 +965,6 @@ public:
 
 	EndpointId GetEndpoint() const { return mEndpointId; };
 };
-
 
 } // namespace ClosureDimension
 } // namespace Clusters
